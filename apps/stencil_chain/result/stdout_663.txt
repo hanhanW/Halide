@@ -1,0 +1,1 @@
+bin/stencil_chain.generator -g stencil_chain -o ./bin -f stencil_chain_auto_schedule target=host-new_autoscheduler-no_runtime auto_schedule=true
