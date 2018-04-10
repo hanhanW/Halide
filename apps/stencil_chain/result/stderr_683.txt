@@ -1,4 +1,4 @@
-Dropout seed = 663
+Dropout seed = 683
 Node: output
   Symbolic region: 
     output.0.min, output.0.max
@@ -425,224 +425,219 @@ Edge: input_im -> lambda_0
     Max 0: lambda_0.0.max
     Min 1: lambda_0.1.min
     Max 1: lambda_0.1.max
-[...................................-                                          ][.........................................................\                    ]
+[.....................................-                                        ][...........................................................\                  ]
 ** Optimal schedule:
-State with cost 5030739382.480499:
+State with cost 5320785012.289444:
 
 realize: output
-realize: stage_20
-realize: stage_3
-realize: stage_10
-realize: stage_27
-stage_3 2 8 t
- realize: lambda_0
- realize: repeat_edge
- realize: stage_0
+realize: stage_7
+realize: stage_21
+realize: stage_16
+realize: stage_24
+stage_7 2 8 t
  realize: stage_2
  realize: stage_1
- stage_2 1 338 t
-  lambda_0 776 1 t *
-   inlined: input_im 1
-  repeat_edge 840 13 t *
-  stage_0 836 9 t *
-  stage_1 832 5 t *
-  stage_2 828 1 t *
- stage_3 824 334 t *
-stage_10 1 16 t
- realize: stage_7
- realize: stage_8
- realize: stage_4
+ realize: stage_3
  realize: stage_5
  realize: stage_6
- realize: stage_9
- stage_9 1 170 t
-  stage_4 1644 21 t *
-  stage_5 1640 17 t *
-  stage_6 1636 13 t *
-  stage_7 1632 9 t *
-  stage_8 1628 5 t *
-  stage_9 1624 1 t *
- stage_10 1620 166 t *
-stage_20 4 4 t
- realize: stage_15
- realize: stage_14
- realize: stage_13
- realize: stage_17
+ stage_1 1 4 t
+  realize: input_im
+  realize: lambda_0
+  realize: repeat_edge
+  realize: stage_0
+  stage_1 1 89
+   input_im 784 1 t *
+   lambda_0 784 1 t *
+   repeat_edge 848 9 t *
+   stage_0 844 5 t *
+   stage_1 840 1 t *
+ stage_2 836 352 t *
+ stage_3 832 348 t *
+ stage_5 2 2 t
+  realize: stage_4
+  stage_4 416 174 t *
+  stage_5 412 170 t *
+ stage_6 820 336 t *
+ stage_7 816 332 t *
+stage_16 4 4 t
+ realize: stage_8
  realize: stage_11
- realize: stage_12
- realize: stage_16
- stage_20 1 4
-  realize: stage_18
-  stage_11 431 199 t *
-  stage_12 427 195 t *
-  stage_13 423 191 t *
-  stage_14 419 187 t *
-  stage_15 415 183 t *
-  stage_16 411 179 t *
-  stage_17 407 175 t *
-  stage_20 1 2
-   realize: stage_19
-   stage_18 403 90 t *
-   stage_20 1 82
-    stage_19 399 5 t *
-    stage_20 395 1 t *
-stage_27 1 16 t
- realize: stage_21
+ realize: stage_10
+ realize: stage_9
+ stage_16 1 2
+  realize: stage_15
+  realize: stage_14
+  realize: stage_13
+  realize: stage_12
+  stage_8 431 360 t *
+  stage_9 427 356 t *
+  stage_10 423 352 t *
+  stage_11 419 348 t *
+  stage_16 1 328
+   stage_12 415 17 t *
+   stage_13 411 13 t *
+   stage_14 407 9 t *
+   stage_15 403 5 t *
+   stage_16 399 1 t *
+stage_21 8 2 t
+ realize: stage_18
+ realize: stage_20
+ stage_20 1 2 t
+  realize: stage_19
+  stage_18 2 2 t
+   realize: stage_17
+   stage_17 109 334 t *
+   stage_18 105 330 t *
+  stage_19 205 656 t *
+  stage_20 201 652 t *
+ stage_21 197 1300 t *
+stage_24 2 32 t
  realize: stage_22
  realize: stage_23
- realize: stage_24
+ stage_24 1 81
+  stage_22 790 9 t *
+  stage_23 786 5 t *
+  stage_24 782 1 t *
+output 1 16 t
  realize: stage_25
  realize: stage_26
- stage_27 1 161
-  stage_21 1576 25 t *
-  stage_22 1572 21 t *
-  stage_23 1568 17 t *
-  stage_24 1564 13 t *
-  stage_25 1560 9 t *
-  stage_26 1556 5 t *
-  stage_27 1552 1 t *
-output 1 32 t
+ realize: stage_27
  realize: stage_28
  realize: stage_29
  realize: stage_30
- stage_30 1 84 t
-  stage_28 1548 9 t *
-  stage_29 1544 5 t *
-  stage_30 1540 1 t *
- output 1536 80 t *
+ stage_29 1 168 t
+  stage_25 1560 17 t *
+  stage_26 1556 13 t *
+  stage_27 1552 9 t *
+  stage_28 1548 5 t *
+  stage_29 1544 1 t *
+ stage_30 1540 164 t *
+ output 1536 160 t *
   inlined: stage_31 1
-Folding discount for stage_28: 0.097826
-Folding discount for stage_29: 0.056818
-Folding discount for stage_21: 0.135135
-Folding discount for stage_22: 0.116022
-Folding discount for stage_23: 0.096045
-Folding discount for stage_24: 0.075145
-Folding discount for stage_25: 0.053254
-Folding discount for stage_26: 0.030303
-Folding discount for stage_19: 0.058140
-Folding discount for stage_18: 0.526316
-Folding discount for stage_15: 0.272727
-Folding discount for stage_14: 0.277037
-Folding discount for stage_13: 0.281296
-Folding discount for stage_17: 0.263952
-Folding discount for stage_11: 0.289665
-Folding discount for stage_12: 0.285505
-Folding discount for stage_16: 0.268366
-Folding discount for stage_7: 0.050562
-Folding discount for stage_8: 0.028736
-Folding discount for stage_4: 0.110526
-Folding discount for stage_5: 0.091398
-Folding discount for stage_6: 0.071429
-Folding discount for lambda_0: 0.003497
-Folding discount for repeat_edge: 0.037143
-Folding discount for stage_0: 0.026012
-Folding discount for stage_1: 0.014620
-Func input_im is inlined
-Func input_im has costs: 25439232.000000 = 25439232.000000 + 0.000000
-Func lambda_0 has costs: 35875840.000000 = 35875840.000000 + 0.000000
-Func repeat_edge has costs: 88210670.131374 = 85478400.000000 + 2732270.131374
-Func stage_0 has costs: 1675440532.603405 = 1661862912.000000 + 13577620.603405
-Func stage_1 has costs: 1622745690.170888 = 1611657216.000000 + 11088474.170888
-Func stage_2 has costs: 1600918175.903985 = 1592807424.000000 + 8110751.903985
-Func stage_3 has costs: 1639388935.930219 = 1573957632.000000 + 65431303.930219
-Func stage_4 has costs: 2028743918.003926 = 1773511680.000000 + 255232238.003926
-Func stage_5 has costs: 1761824215.084731 = 1736174592.000000 + 25649623.084731
-Func stage_6 has costs: 1721347125.712725 = 1698837504.000000 + 22509621.712725
-Func stage_7 has costs: 1664559700.055369 = 1645369344.000000 + 19190356.055369
-Func stage_8 has costs: 1623953924.945835 = 1608394752.000000 + 15559172.945835
-Func stage_9 has costs: 1582715020.483501 = 1571420160.000000 + 11294860.483501
-Func stage_10 has costs: 1591621601.174739 = 1527512832.000000 + 64108769.174739
-Func stage_11 has costs: 1925840003.385399 = 1680984576.000000 + 244855427.385399
-Func stage_12 has costs: 1709520598.814678 = 1671197184.000000 + 38323414.814678
-Func stage_13 has costs: 1698601390.210200 = 1661409792.000000 + 37191598.210201
-Func stage_14 has costs: 1687702026.121747 = 1651622400.000000 + 36079626.121747
-Func stage_15 has costs: 1616013620.205949 = 1581026304.000000 + 34987316.205949
-Func stage_16 has costs: 1605515893.236964 = 1571601408.000000 + 33914485.236963
-Func stage_17 has costs: 1595037461.026318 = 1562176512.000000 + 32860949.026318
-Func stage_18 has costs: 1643483738.333666 = 1611657216.000000 + 31826522.333666
-Func stage_19 has costs: 1581933438.926253 = 1558732800.000000 + 23200638.926253
-Func stage_20 has costs: 1480324333.637830 = 1474905600.000000 + 5418733.637830
-Func stage_21 has costs: 1890289816.018033 = 1659778560.000000 + 230511256.018033
-Func stage_22 has costs: 1649467953.557572 = 1623891456.000000 + 25576497.557572
-Func stage_23 has costs: 1594811055.120358 = 1571963904.000000 + 22847151.120358
-Func stage_24 has costs: 1556464725.250950 = 1536439296.000000 + 20025429.250950
-Func stage_25 has costs: 1517965219.519306 = 1500914688.000000 + 17050531.519306
-Func stage_26 has costs: 1479195825.919272 = 1465390080.000000 + 13805745.919272
-Func stage_27 has costs: 1425283032.385228 = 1415275008.000000 + 10008024.385228
-Func stage_28 has costs: 1838258337.217486 = 1617457152.000000 + 220801185.217486
-Func stage_29 has costs: 1561990934.081113 = 1547132928.000000 + 14858006.081113
-Func stage_30 has costs: 1487360676.081843 = 1476808704.000000 + 10551972.081843
+Folding discount for stage_25: 0.092391
+Folding discount for stage_26: 0.072222
+Folding discount for stage_27: 0.051136
+Folding discount for stage_28: 0.029070
+Folding discount for stage_22: 0.101124
+Folding discount for stage_23: 0.058824
+Folding discount for stage_18: 0.503049
+Folding discount for stage_15: 0.015060
+Folding discount for stage_14: 0.026786
+Folding discount for stage_13: 0.038235
+Folding discount for stage_12: 0.049419
+Folding discount for stage_8: 0.524017
+Folding discount for stage_11: 0.515556
+Folding discount for stage_10: 0.518409
+Folding discount for stage_9: 0.521230
+Folding discount for input_im: 0.030303
+Folding discount for lambda_0: 0.030303
+Folding discount for repeat_edge: 0.092784
+Folding discount for stage_0: 0.053763
+Func input_im has costs: 16558080.000000 = 16558080.000000 + 0.000000
+Func lambda_0 has costs: 17838678.665000 = 16558080.000000 + 1280598.665000
+Func repeat_edge has costs: 96039510.665000 = 94758912.000000 + 1280598.665000
+Func stage_0 has costs: 1799445944.293155 = 1786742784.000000 + 12703160.293155
+Func stage_1 has costs: 1718907405.306391 = 1709893632.000000 + 9013773.306391
+Func stage_2 has costs: 1762951492.243933 = 1690681344.000000 + 72270148.243933
+Func stage_3 has costs: 1710480509.045248 = 1639931904.000000 + 70548605.045248
+Func stage_4 has costs: 1708784270.981744 = 1639931904.000000 + 68852366.981744
+Func stage_5 has costs: 1636658503.490872 = 1602232320.000000 + 34426183.490872
+Func stage_6 has costs: 1648917665.146420 = 1583382528.000000 + 65535137.146419
+Func stage_7 has costs: 1598359379.014522 = 1534445568.000000 + 63913811.014522
+Func stage_8 has costs: 1930253061.217186 = 1680984576.000000 + 249268485.217186
+Func stage_9 has costs: 1722742465.078987 = 1671197184.000000 + 51545281.078987
+Func stage_10 has costs: 1711661697.536760 = 1661409792.000000 + 50251905.536761
+Func stage_11 has costs: 1700602162.688222 = 1651622400.000000 + 48979762.688221
+Func stage_12 has costs: 1668810794.772089 = 1621082112.000000 + 47728682.772089
+Func stage_13 has costs: 1612830958.111510 = 1602232320.000000 + 10598638.111510
+Func stage_14 has costs: 1592410877.049089 = 1583382528.000000 + 9028349.049089
+Func stage_15 has costs: 1571848289.001202 = 1564532736.000000 + 7315553.001202
+Func stage_16 has costs: 1489276547.042288 = 1483968000.000000 + 5308547.042288
+Func stage_17 has costs: 1931213028.680569 = 1695031296.000000 + 236181732.680569
+Func stage_18 has costs: 1681214266.247150 = 1656655052.800000 + 24559213.447151
+Func stage_19 has costs: 1590690999.617500 = 1545682944.000000 + 45008055.617500
+Func stage_20 has costs: 1579847515.723293 = 1536258048.000000 + 43589467.723293
+Func stage_21 has costs: 1590848440.082872 = 1531545600.000000 + 59302840.082872
+Func stage_22 has costs: 1842214738.075737 = 1613107200.000000 + 229107538.075736
+Func stage_23 has costs: 1551088377.091110 = 1540608000.000000 + 10480377.091111
+Func stage_24 has costs: 1443930273.734620 = 1436526336.000000 + 7403937.734620
+Func stage_25 has costs: 1859061545.732807 = 1634131968.000000 + 224929577.732807
+Func stage_26 has costs: 1619265641.961480 = 1598607360.000000 + 20658281.961480
+Func stage_27 has costs: 1564737423.740719 = 1547132928.000000 + 17604495.740719
+Func stage_28 has costs: 1526237942.680085 = 1511970816.000000 + 14267126.680085
+Func stage_29 has costs: 1487160957.616822 = 1476808704.000000 + 10352253.616822
+Func stage_30 has costs: 1500031403.998519 = 1441646592.000000 + 58384811.998519
 Func stage_31 is inlined
 Func stage_31 has costs: 1376256000.000000 = 1376256000.000000 + 0.000000
-Func output has costs: 80445569.229635 = 39321600.000000 + 41123969.229635
+Func output has costs: 95415013.956542 = 39321600.000000 + 56093413.956542
 XXXN 39321600.000000
 XXXI 1376256000.000000
+XXXN 1441646592.000000
 XXXN 1476808704.000000
+XXXN 1511970816.000000
 XXXN 1547132928.000000
-XXXN 1617457152.000000
-XXXN 1415275008.000000
-XXXN 1465390080.000000
-XXXN 1500914688.000000
-XXXN 1536439296.000000
-XXXN 1571963904.000000
-XXXN 1623891456.000000
-XXXN 1659778560.000000
-XXXN 1474905600.000000
-XXXN 1558732800.000000
-XXXN 1611657216.000000
-XXXN 1562176512.000000
-XXXN 1571601408.000000
-XXXN 1581026304.000000
+XXXN 1598607360.000000
+XXXN 1634131968.000000
+XXXN 1436526336.000000
+XXXN 1540608000.000000
+XXXN 1613107200.000000
+XXXN 1531545600.000000
+XXXN 1536258048.000000
+XXXN 1545682944.000000
+XXXN 1656655052.800000
+XXXN 1695031296.000000
+XXXN 1483968000.000000
+XXXN 1564532736.000000
+XXXN 1583382528.000000
+XXXN 1602232320.000000
+XXXN 1621082112.000000
 XXXN 1651622400.000000
 XXXN 1661409792.000000
 XXXN 1671197184.000000
 XXXN 1680984576.000000
-XXXN 1527512832.000000
-XXXN 1571420160.000000
-XXXN 1608394752.000000
-XXXN 1645369344.000000
-XXXN 1698837504.000000
-XXXN 1736174592.000000
-XXXN 1773511680.000000
-XXXN 1573957632.000000
-XXXN 1592807424.000000
-XXXN 1611657216.000000
-XXXN 1661862912.000000
-XXXN 85478400.000000
-XXXN 35875840.000000
-XXXI 25439232.000000
-XXXE 41123969.229635
-XXXE 41123969.229635
-XXXE 10551972.081843
-XXXE 14858006.081113
-XXXE 220801185.217486
-XXXE 10008024.385228
-XXXE 13805745.919272
-XXXE 17050531.519306
-XXXE 20025429.250950
-XXXE 22847151.120358
-XXXE 25576497.557572
-XXXE 230511256.018033
-XXXE 5418733.637830
-XXXE 23200638.926253
-XXXE 31826522.333666
-XXXE 32860949.026318
-XXXE 33914485.236963
-XXXE 34987316.205949
-XXXE 36079626.121747
-XXXE 37191598.210201
-XXXE 38323414.814678
-XXXE 244855427.385399
-XXXE 64108769.174739
-XXXE 11294860.483501
-XXXE 15559172.945835
-XXXE 19190356.055369
-XXXE 22509621.712725
-XXXE 25649623.084731
-XXXE 255232238.003926
-XXXE 65431303.930219
-XXXE 8110751.903985
-XXXE 11088474.170888
-XXXE 13577620.603405
-XXXE 2732270.131374
-XXXE 0.000000
+XXXN 1534445568.000000
+XXXN 1583382528.000000
+XXXN 1602232320.000000
+XXXN 1639931904.000000
+XXXN 1639931904.000000
+XXXN 1690681344.000000
+XXXN 1709893632.000000
+XXXN 1786742784.000000
+XXXN 94758912.000000
+XXXN 16558080.000000
+XXXN 16558080.000000
+XXXE 56093413.956542
+XXXE 56093413.956542
+XXXE 58384811.998519
+XXXE 10352253.616822
+XXXE 14267126.680085
+XXXE 17604495.740719
+XXXE 20658281.961480
+XXXE 224929577.732807
+XXXE 7403937.734620
+XXXE 10480377.091111
+XXXE 229107538.075736
+XXXE 59302840.082872
+XXXE 43589467.723293
+XXXE 45008055.617500
+XXXE 24559213.447151
+XXXE 236181732.680569
+XXXE 5308547.042288
+XXXE 7315553.001202
+XXXE 9028349.049089
+XXXE 10598638.111510
+XXXE 47728682.772089
+XXXE 48979762.688221
+XXXE 50251905.536761
+XXXE 51545281.078987
+XXXE 249268485.217186
+XXXE 63913811.014522
+XXXE 65535137.146419
+XXXE 34426183.490872
+XXXE 68852366.981744
+XXXE 70548605.045248
+XXXE 72270148.243933
+XXXE 9013773.306391
+XXXE 12703160.293155
+XXXE 1280598.665000
+XXXE 1280598.665000
