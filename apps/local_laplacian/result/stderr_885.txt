@@ -1,0 +1,2171 @@
+Dropout seed = 885
+Node: output
+  Symbolic region: 
+    output.0.min, output.0.max
+    output.1.min, output.1.max
+    output.2.min, output.2.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 14.000000
+Node: color
+  Symbolic region: 
+    color.0.min, color.0.max
+    color.1.min, color.1.max
+    color.2.min, color.2.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 56.000000
+Node: f101
+  Symbolic region: 
+    f101.0.min, f101.0.max
+    f101.1.min, f101.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f81
+  Symbolic region: 
+    f81.0.min, f81.0.max
+    f81.1.min, f81.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f27
+  Symbolic region: 
+    f27.0.min, f27.0.max
+    f27.1.min, f27.1.max
+    f27.2.min, f27.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f53
+  Symbolic region: 
+    f53.0.min, f53.0.max
+    f53.1.min, f53.1.max
+    f53.2.min, f53.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$6
+  Symbolic region: 
+    upx$6.0.min, upx$6.0.max
+    upx$6.1.min, upx$6.1.max
+    upx$6.2.min, upx$6.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f127
+  Symbolic region: 
+    f127.0.min, f127.0.max
+    f127.1.min, f127.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$13
+  Symbolic region: 
+    upx$13.0.min, upx$13.0.max
+    upx$13.1.min, upx$13.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f102
+  Symbolic region: 
+    f102.0.min, f102.0.max
+    f102.1.min, f102.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f82
+  Symbolic region: 
+    f82.0.min, f82.0.max
+    f82.1.min, f82.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f28
+  Symbolic region: 
+    f28.0.min, f28.0.max
+    f28.1.min, f28.1.max
+    f28.2.min, f28.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f52
+  Symbolic region: 
+    f52.0.min, f52.0.max
+    f52.1.min, f52.1.max
+    f52.2.min, f52.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$5
+  Symbolic region: 
+    upx$5.0.min, upx$5.0.max
+    upx$5.1.min, upx$5.1.max
+    upx$5.2.min, upx$5.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f126
+  Symbolic region: 
+    f126.0.min, f126.0.max
+    f126.1.min, f126.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$12
+  Symbolic region: 
+    upx$12.0.min, upx$12.0.max
+    upx$12.1.min, upx$12.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f103
+  Symbolic region: 
+    f103.0.min, f103.0.max
+    f103.1.min, f103.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f83
+  Symbolic region: 
+    f83.0.min, f83.0.max
+    f83.1.min, f83.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f29
+  Symbolic region: 
+    f29.0.min, f29.0.max
+    f29.1.min, f29.1.max
+    f29.2.min, f29.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f51
+  Symbolic region: 
+    f51.0.min, f51.0.max
+    f51.1.min, f51.1.max
+    f51.2.min, f51.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$4
+  Symbolic region: 
+    upx$4.0.min, upx$4.0.max
+    upx$4.1.min, upx$4.1.max
+    upx$4.2.min, upx$4.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f125
+  Symbolic region: 
+    f125.0.min, f125.0.max
+    f125.1.min, f125.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$11
+  Symbolic region: 
+    upx$11.0.min, upx$11.0.max
+    upx$11.1.min, upx$11.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f104
+  Symbolic region: 
+    f104.0.min, f104.0.max
+    f104.1.min, f104.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f84
+  Symbolic region: 
+    f84.0.min, f84.0.max
+    f84.1.min, f84.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f30
+  Symbolic region: 
+    f30.0.min, f30.0.max
+    f30.1.min, f30.1.max
+    f30.2.min, f30.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f50
+  Symbolic region: 
+    f50.0.min, f50.0.max
+    f50.1.min, f50.1.max
+    f50.2.min, f50.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$3
+  Symbolic region: 
+    upx$3.0.min, upx$3.0.max
+    upx$3.1.min, upx$3.1.max
+    upx$3.2.min, upx$3.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f124
+  Symbolic region: 
+    f124.0.min, f124.0.max
+    f124.1.min, f124.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$10
+  Symbolic region: 
+    upx$10.0.min, upx$10.0.max
+    upx$10.1.min, upx$10.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f105
+  Symbolic region: 
+    f105.0.min, f105.0.max
+    f105.1.min, f105.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f85
+  Symbolic region: 
+    f85.0.min, f85.0.max
+    f85.1.min, f85.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f31
+  Symbolic region: 
+    f31.0.min, f31.0.max
+    f31.1.min, f31.1.max
+    f31.2.min, f31.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f49
+  Symbolic region: 
+    f49.0.min, f49.0.max
+    f49.1.min, f49.1.max
+    f49.2.min, f49.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$2
+  Symbolic region: 
+    upx$2.0.min, upx$2.0.max
+    upx$2.1.min, upx$2.1.max
+    upx$2.2.min, upx$2.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f123
+  Symbolic region: 
+    f123.0.min, f123.0.max
+    f123.1.min, f123.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$9
+  Symbolic region: 
+    upx$9.0.min, upx$9.0.max
+    upx$9.1.min, upx$9.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f106
+  Symbolic region: 
+    f106.0.min, f106.0.max
+    f106.1.min, f106.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f86
+  Symbolic region: 
+    f86.0.min, f86.0.max
+    f86.1.min, f86.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f32
+  Symbolic region: 
+    f32.0.min, f32.0.max
+    f32.1.min, f32.1.max
+    f32.2.min, f32.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f48
+  Symbolic region: 
+    f48.0.min, f48.0.max
+    f48.1.min, f48.1.max
+    f48.2.min, f48.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx$1
+  Symbolic region: 
+    upx$1.0.min, upx$1.0.max
+    upx$1.1.min, upx$1.1.max
+    upx$1.2.min, upx$1.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f122
+  Symbolic region: 
+    f122.0.min, f122.0.max
+    f122.1.min, f122.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$8
+  Symbolic region: 
+    upx$8.0.min, upx$8.0.max
+    upx$8.1.min, upx$8.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f107
+  Symbolic region: 
+    f107.0.min, f107.0.max
+    f107.1.min, f107.1.max
+  Arithmetic cost: 36.000000
+  Inlined cost: 28.000000
+Node: f87
+  Symbolic region: 
+    f87.0.min, f87.0.max
+    f87.1.min, f87.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f33
+  Symbolic region: 
+    f33.0.min, f33.0.max
+    f33.1.min, f33.1.max
+    f33.2.min, f33.2.max
+  Arithmetic cost: 52.000000
+  Inlined cost: 40.000000
+Node: f47
+  Symbolic region: 
+    f47.0.min, f47.0.max
+    f47.1.min, f47.1.max
+    f47.2.min, f47.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: upx
+  Symbolic region: 
+    upx.0.min, upx.0.max
+    upx.1.min, upx.1.max
+    upx.2.min, upx.2.max
+  Arithmetic cost: 84.000000
+  Inlined cost: 72.000000
+Node: f121
+  Symbolic region: 
+    f121.0.min, f121.0.max
+    f121.1.min, f121.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: upx$7
+  Symbolic region: 
+    upx$7.0.min, upx$7.0.max
+    upx$7.1.min, upx$7.1.max
+  Arithmetic cost: 68.000000
+  Inlined cost: 60.000000
+Node: f108
+  Symbolic region: 
+    f108.0.min, f108.0.max
+    f108.1.min, f108.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f88
+  Symbolic region: 
+    f88.0.min, f88.0.max
+    f88.1.min, f88.1.max
+  Arithmetic cost: 116.000000
+  Inlined cost: 108.000000
+Node: f61
+  Symbolic region: 
+    f61.0.min, f61.0.max
+    f61.1.min, f61.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f80
+  Symbolic region: 
+    f80.0.min, f80.0.max
+    f80.1.min, f80.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$13
+  Symbolic region: 
+    downx$13.0.min, downx$13.0.max
+    downx$13.1.min, downx$13.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f60
+  Symbolic region: 
+    f60.0.min, f60.0.max
+    f60.1.min, f60.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f79
+  Symbolic region: 
+    f79.0.min, f79.0.max
+    f79.1.min, f79.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$12
+  Symbolic region: 
+    downx$12.0.min, downx$12.0.max
+    downx$12.1.min, downx$12.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f59
+  Symbolic region: 
+    f59.0.min, f59.0.max
+    f59.1.min, f59.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f78
+  Symbolic region: 
+    f78.0.min, f78.0.max
+    f78.1.min, f78.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$11
+  Symbolic region: 
+    downx$11.0.min, downx$11.0.max
+    downx$11.1.min, downx$11.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f58
+  Symbolic region: 
+    f58.0.min, f58.0.max
+    f58.1.min, f58.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f77
+  Symbolic region: 
+    f77.0.min, f77.0.max
+    f77.1.min, f77.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$10
+  Symbolic region: 
+    downx$10.0.min, downx$10.0.max
+    downx$10.1.min, downx$10.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f57
+  Symbolic region: 
+    f57.0.min, f57.0.max
+    f57.1.min, f57.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f76
+  Symbolic region: 
+    f76.0.min, f76.0.max
+    f76.1.min, f76.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$9
+  Symbolic region: 
+    downx$9.0.min, downx$9.0.max
+    downx$9.1.min, downx$9.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f56
+  Symbolic region: 
+    f56.0.min, f56.0.max
+    f56.1.min, f56.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f75
+  Symbolic region: 
+    f75.0.min, f75.0.max
+    f75.1.min, f75.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$8
+  Symbolic region: 
+    downx$8.0.min, downx$8.0.max
+    downx$8.1.min, downx$8.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f55
+  Symbolic region: 
+    f55.0.min, f55.0.max
+    f55.1.min, f55.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f74
+  Symbolic region: 
+    f74.0.min, f74.0.max
+    f74.1.min, f74.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: downx$7
+  Symbolic region: 
+    downx$7.0.min, downx$7.0.max
+    downx$7.1.min, downx$7.1.max
+  Arithmetic cost: 104.000000
+  Inlined cost: 96.000000
+Node: f54
+  Symbolic region: 
+    f54.0.min, f54.0.max
+    f54.1.min, f54.1.max
+  Arithmetic cost: 20.000000
+  Inlined cost: 12.000000
+Node: f34
+  Symbolic region: 
+    f34.0.min, f34.0.max
+    f34.1.min, f34.1.max
+    f34.2.min, f34.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f7
+  Symbolic region: 
+    f7.0.min, f7.0.max
+    f7.1.min, f7.1.max
+    f7.2.min, f7.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f26
+  Symbolic region: 
+    f26.0.min, f26.0.max
+    f26.1.min, f26.1.max
+    f26.2.min, f26.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$6
+  Symbolic region: 
+    downx$6.0.min, downx$6.0.max
+    downx$6.1.min, downx$6.1.max
+    downx$6.2.min, downx$6.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f6
+  Symbolic region: 
+    f6.0.min, f6.0.max
+    f6.1.min, f6.1.max
+    f6.2.min, f6.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f25
+  Symbolic region: 
+    f25.0.min, f25.0.max
+    f25.1.min, f25.1.max
+    f25.2.min, f25.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$5
+  Symbolic region: 
+    downx$5.0.min, downx$5.0.max
+    downx$5.1.min, downx$5.1.max
+    downx$5.2.min, downx$5.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f5
+  Symbolic region: 
+    f5.0.min, f5.0.max
+    f5.1.min, f5.1.max
+    f5.2.min, f5.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f24
+  Symbolic region: 
+    f24.0.min, f24.0.max
+    f24.1.min, f24.1.max
+    f24.2.min, f24.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$4
+  Symbolic region: 
+    downx$4.0.min, downx$4.0.max
+    downx$4.1.min, downx$4.1.max
+    downx$4.2.min, downx$4.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f4
+  Symbolic region: 
+    f4.0.min, f4.0.max
+    f4.1.min, f4.1.max
+    f4.2.min, f4.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f23
+  Symbolic region: 
+    f23.0.min, f23.0.max
+    f23.1.min, f23.1.max
+    f23.2.min, f23.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$3
+  Symbolic region: 
+    downx$3.0.min, downx$3.0.max
+    downx$3.1.min, downx$3.1.max
+    downx$3.2.min, downx$3.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f3
+  Symbolic region: 
+    f3.0.min, f3.0.max
+    f3.1.min, f3.1.max
+    f3.2.min, f3.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f22
+  Symbolic region: 
+    f22.0.min, f22.0.max
+    f22.1.min, f22.1.max
+    f22.2.min, f22.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$2
+  Symbolic region: 
+    downx$2.0.min, downx$2.0.max
+    downx$2.1.min, downx$2.1.max
+    downx$2.2.min, downx$2.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f2
+  Symbolic region: 
+    f2.0.min, f2.0.max
+    f2.1.min, f2.1.max
+    f2.2.min, f2.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f21
+  Symbolic region: 
+    f21.0.min, f21.0.max
+    f21.1.min, f21.1.max
+    f21.2.min, f21.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx$1
+  Symbolic region: 
+    downx$1.0.min, downx$1.0.max
+    downx$1.1.min, downx$1.1.max
+    downx$1.2.min, downx$1.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f1
+  Symbolic region: 
+    f1.0.min, f1.0.max
+    f1.1.min, f1.1.max
+    f1.2.min, f1.2.max
+  Arithmetic cost: 28.000000
+  Inlined cost: 16.000000
+Node: f20
+  Symbolic region: 
+    f20.0.min, f20.0.max
+    f20.1.min, f20.1.max
+    f20.2.min, f20.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: downx
+  Symbolic region: 
+    downx.0.min, downx.0.max
+    downx.1.min, downx.1.max
+    downx.2.min, downx.2.max
+  Arithmetic cost: 136.000000
+  Inlined cost: 124.000000
+Node: f0
+  Symbolic region: 
+    f0.0.min, f0.0.max
+    f0.1.min, f0.1.max
+    f0.2.min, f0.2.max
+  Arithmetic cost: 96.000000
+  Inlined cost: 84.000000
+Node: remap
+  Symbolic region: 
+    remap.0.min, remap.0.max
+  Arithmetic cost: 44.000000
+  Inlined cost: 40.000000
+Node: gray
+  Symbolic region: 
+    gray.0.min, gray.0.max
+    gray.1.min, gray.1.max
+  Arithmetic cost: 88.000000
+  Inlined cost: 80.000000
+Node: floating
+  Symbolic region: 
+    floating.0.min, floating.0.max
+    floating.1.min, floating.1.max
+    floating.2.min, floating.2.max
+  Arithmetic cost: 32.000000
+  Inlined cost: 20.000000
+Node: repeat_edge
+  Symbolic region: 
+    repeat_edge.0.min, repeat_edge.0.max
+    repeat_edge.1.min, repeat_edge.1.max
+    repeat_edge.2.min, repeat_edge.2.max
+  Arithmetic cost: 26.000000
+  Inlined cost: 20.000000
+Node: lambda_0
+  Symbolic region: 
+    lambda_0.0.min, lambda_0.0.max
+    lambda_0.1.min, lambda_0.1.max
+    lambda_0.2.min, lambda_0.2.max
+  Arithmetic cost: 14.000000
+  Inlined cost: 8.000000
+Node: input_im
+  Symbolic region: 
+    input_im.0.min, input_im.0.max
+    input_im.1.min, input_im.1.max
+    input_im.2.min, input_im.2.max
+  Arithmetic cost: 14.000000
+  Inlined cost: 8.000000
+Edge: color -> output
+  Footprint: 
+    Min 0: output.0.min
+    Max 0: output.0.max
+    Min 1: output.1.min
+    Max 1: output.1.max
+    Min 2: output.2.min
+    Max 2: output.2.max
+Edge: f101 -> color
+  Footprint: 
+    Min 0: color.0.min
+    Max 0: color.0.max
+    Min 1: color.1.min
+    Max 1: color.1.max
+Edge: floating -> color
+  Footprint: 
+    Min 0: color.0.min
+    Max 0: color.0.max
+    Min 1: color.1.min
+    Max 1: color.1.max
+    Min 2: color.2.min
+    Max 2: color.2.max
+Edge: gray -> color
+  Footprint: 
+    Min 0: color.0.min
+    Max 0: color.0.max
+    Min 1: color.1.min
+    Max 1: color.1.max
+Edge: f127 -> f101
+  Footprint: 
+    Min 0: f101.0.min
+    Max 0: f101.0.max
+    Min 1: f101.1.min
+    Max 1: f101.1.max
+Edge: f81 -> f101
+  Footprint: 
+    Min 0: f101.0.min
+    Max 0: f101.0.max
+    Min 1: f101.1.min
+    Max 1: f101.1.max
+Edge: f27 -> f81
+  Footprint: 
+    Min 0: f81.0.min
+    Max 0: f81.0.max
+    Min 1: f81.1.min
+    Max 1: f81.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f54 -> f81
+  Footprint: 
+    Min 0: f81.0.min
+    Max 0: f81.0.max
+    Min 1: f81.1.min
+    Max 1: f81.1.max
+Edge: f0 -> f27
+  Footprint: 
+    Min 0: f27.0.min
+    Max 0: f27.0.max
+    Min 1: f27.1.min
+    Max 1: f27.1.max
+    Min 2: f27.2.min
+    Max 2: f27.2.max
+Edge: f53 -> f27
+  Footprint: 
+    Min 0: f27.0.min
+    Max 0: f27.0.max
+    Min 1: f27.1.min
+    Max 1: f27.1.max
+    Min 2: f27.2.min
+    Max 2: f27.2.max
+Edge: upx$6 -> f53
+  Footprint: 
+    Min 0: f53.0.min
+    Max 0: f53.0.max
+    Min 1: ((f53.1.min/2) + -1)
+    Max 1: ((f53.1.max/2) + 1)
+    Min 2: f53.2.min
+    Max 2: f53.2.max
+Edge: f1 -> upx$6
+  Footprint: 
+    Min 0: ((upx$6.0.min/2) + -1)
+    Max 0: ((upx$6.0.max/2) + 1)
+    Min 1: upx$6.1.min
+    Max 1: upx$6.1.max
+    Min 2: upx$6.2.min
+    Max 2: upx$6.2.max
+Edge: upx$13 -> f127
+  Footprint: 
+    Min 0: f127.0.min
+    Max 0: f127.0.max
+    Min 1: ((f127.1.min/2) + -1)
+    Max 1: ((f127.1.max/2) + 1)
+Edge: f102 -> upx$13
+  Footprint: 
+    Min 0: ((upx$13.0.min/2) + -1)
+    Max 0: ((upx$13.0.max/2) + 1)
+    Min 1: upx$13.1.min
+    Max 1: upx$13.1.max
+Edge: f126 -> f102
+  Footprint: 
+    Min 0: f102.0.min
+    Max 0: f102.0.max
+    Min 1: f102.1.min
+    Max 1: f102.1.max
+Edge: f82 -> f102
+  Footprint: 
+    Min 0: f102.0.min
+    Max 0: f102.0.max
+    Min 1: f102.1.min
+    Max 1: f102.1.max
+Edge: f28 -> f82
+  Footprint: 
+    Min 0: f82.0.min
+    Max 0: f82.0.max
+    Min 1: f82.1.min
+    Max 1: f82.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f55 -> f82
+  Footprint: 
+    Min 0: f82.0.min
+    Max 0: f82.0.max
+    Min 1: f82.1.min
+    Max 1: f82.1.max
+Edge: f1 -> f28
+  Footprint: 
+    Min 0: f28.0.min
+    Max 0: f28.0.max
+    Min 1: f28.1.min
+    Max 1: f28.1.max
+    Min 2: f28.2.min
+    Max 2: f28.2.max
+Edge: f52 -> f28
+  Footprint: 
+    Min 0: f28.0.min
+    Max 0: f28.0.max
+    Min 1: f28.1.min
+    Max 1: f28.1.max
+    Min 2: f28.2.min
+    Max 2: f28.2.max
+Edge: upx$5 -> f52
+  Footprint: 
+    Min 0: f52.0.min
+    Max 0: f52.0.max
+    Min 1: ((f52.1.min/2) + -1)
+    Max 1: ((f52.1.max/2) + 1)
+    Min 2: f52.2.min
+    Max 2: f52.2.max
+Edge: f2 -> upx$5
+  Footprint: 
+    Min 0: ((upx$5.0.min/2) + -1)
+    Max 0: ((upx$5.0.max/2) + 1)
+    Min 1: upx$5.1.min
+    Max 1: upx$5.1.max
+    Min 2: upx$5.2.min
+    Max 2: upx$5.2.max
+Edge: upx$12 -> f126
+  Footprint: 
+    Min 0: f126.0.min
+    Max 0: f126.0.max
+    Min 1: ((f126.1.min/2) + -1)
+    Max 1: ((f126.1.max/2) + 1)
+Edge: f103 -> upx$12
+  Footprint: 
+    Min 0: ((upx$12.0.min/2) + -1)
+    Max 0: ((upx$12.0.max/2) + 1)
+    Min 1: upx$12.1.min
+    Max 1: upx$12.1.max
+Edge: f125 -> f103
+  Footprint: 
+    Min 0: f103.0.min
+    Max 0: f103.0.max
+    Min 1: f103.1.min
+    Max 1: f103.1.max
+Edge: f83 -> f103
+  Footprint: 
+    Min 0: f103.0.min
+    Max 0: f103.0.max
+    Min 1: f103.1.min
+    Max 1: f103.1.max
+Edge: f29 -> f83
+  Footprint: 
+    Min 0: f83.0.min
+    Max 0: f83.0.max
+    Min 1: f83.1.min
+    Max 1: f83.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f56 -> f83
+  Footprint: 
+    Min 0: f83.0.min
+    Max 0: f83.0.max
+    Min 1: f83.1.min
+    Max 1: f83.1.max
+Edge: f2 -> f29
+  Footprint: 
+    Min 0: f29.0.min
+    Max 0: f29.0.max
+    Min 1: f29.1.min
+    Max 1: f29.1.max
+    Min 2: f29.2.min
+    Max 2: f29.2.max
+Edge: f51 -> f29
+  Footprint: 
+    Min 0: f29.0.min
+    Max 0: f29.0.max
+    Min 1: f29.1.min
+    Max 1: f29.1.max
+    Min 2: f29.2.min
+    Max 2: f29.2.max
+Edge: upx$4 -> f51
+  Footprint: 
+    Min 0: f51.0.min
+    Max 0: f51.0.max
+    Min 1: ((f51.1.min/2) + -1)
+    Max 1: ((f51.1.max/2) + 1)
+    Min 2: f51.2.min
+    Max 2: f51.2.max
+Edge: f3 -> upx$4
+  Footprint: 
+    Min 0: ((upx$4.0.min/2) + -1)
+    Max 0: ((upx$4.0.max/2) + 1)
+    Min 1: upx$4.1.min
+    Max 1: upx$4.1.max
+    Min 2: upx$4.2.min
+    Max 2: upx$4.2.max
+Edge: upx$11 -> f125
+  Footprint: 
+    Min 0: f125.0.min
+    Max 0: f125.0.max
+    Min 1: ((f125.1.min/2) + -1)
+    Max 1: ((f125.1.max/2) + 1)
+Edge: f104 -> upx$11
+  Footprint: 
+    Min 0: ((upx$11.0.min/2) + -1)
+    Max 0: ((upx$11.0.max/2) + 1)
+    Min 1: upx$11.1.min
+    Max 1: upx$11.1.max
+Edge: f124 -> f104
+  Footprint: 
+    Min 0: f104.0.min
+    Max 0: f104.0.max
+    Min 1: f104.1.min
+    Max 1: f104.1.max
+Edge: f84 -> f104
+  Footprint: 
+    Min 0: f104.0.min
+    Max 0: f104.0.max
+    Min 1: f104.1.min
+    Max 1: f104.1.max
+Edge: f30 -> f84
+  Footprint: 
+    Min 0: f84.0.min
+    Max 0: f84.0.max
+    Min 1: f84.1.min
+    Max 1: f84.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f57 -> f84
+  Footprint: 
+    Min 0: f84.0.min
+    Max 0: f84.0.max
+    Min 1: f84.1.min
+    Max 1: f84.1.max
+Edge: f3 -> f30
+  Footprint: 
+    Min 0: f30.0.min
+    Max 0: f30.0.max
+    Min 1: f30.1.min
+    Max 1: f30.1.max
+    Min 2: f30.2.min
+    Max 2: f30.2.max
+Edge: f50 -> f30
+  Footprint: 
+    Min 0: f30.0.min
+    Max 0: f30.0.max
+    Min 1: f30.1.min
+    Max 1: f30.1.max
+    Min 2: f30.2.min
+    Max 2: f30.2.max
+Edge: upx$3 -> f50
+  Footprint: 
+    Min 0: f50.0.min
+    Max 0: f50.0.max
+    Min 1: ((f50.1.min/2) + -1)
+    Max 1: ((f50.1.max/2) + 1)
+    Min 2: f50.2.min
+    Max 2: f50.2.max
+Edge: f4 -> upx$3
+  Footprint: 
+    Min 0: ((upx$3.0.min/2) + -1)
+    Max 0: ((upx$3.0.max/2) + 1)
+    Min 1: upx$3.1.min
+    Max 1: upx$3.1.max
+    Min 2: upx$3.2.min
+    Max 2: upx$3.2.max
+Edge: upx$10 -> f124
+  Footprint: 
+    Min 0: f124.0.min
+    Max 0: f124.0.max
+    Min 1: ((f124.1.min/2) + -1)
+    Max 1: ((f124.1.max/2) + 1)
+Edge: f105 -> upx$10
+  Footprint: 
+    Min 0: ((upx$10.0.min/2) + -1)
+    Max 0: ((upx$10.0.max/2) + 1)
+    Min 1: upx$10.1.min
+    Max 1: upx$10.1.max
+Edge: f123 -> f105
+  Footprint: 
+    Min 0: f105.0.min
+    Max 0: f105.0.max
+    Min 1: f105.1.min
+    Max 1: f105.1.max
+Edge: f85 -> f105
+  Footprint: 
+    Min 0: f105.0.min
+    Max 0: f105.0.max
+    Min 1: f105.1.min
+    Max 1: f105.1.max
+Edge: f31 -> f85
+  Footprint: 
+    Min 0: f85.0.min
+    Max 0: f85.0.max
+    Min 1: f85.1.min
+    Max 1: f85.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f58 -> f85
+  Footprint: 
+    Min 0: f85.0.min
+    Max 0: f85.0.max
+    Min 1: f85.1.min
+    Max 1: f85.1.max
+Edge: f4 -> f31
+  Footprint: 
+    Min 0: f31.0.min
+    Max 0: f31.0.max
+    Min 1: f31.1.min
+    Max 1: f31.1.max
+    Min 2: f31.2.min
+    Max 2: f31.2.max
+Edge: f49 -> f31
+  Footprint: 
+    Min 0: f31.0.min
+    Max 0: f31.0.max
+    Min 1: f31.1.min
+    Max 1: f31.1.max
+    Min 2: f31.2.min
+    Max 2: f31.2.max
+Edge: upx$2 -> f49
+  Footprint: 
+    Min 0: f49.0.min
+    Max 0: f49.0.max
+    Min 1: ((f49.1.min/2) + -1)
+    Max 1: ((f49.1.max/2) + 1)
+    Min 2: f49.2.min
+    Max 2: f49.2.max
+Edge: f5 -> upx$2
+  Footprint: 
+    Min 0: ((upx$2.0.min/2) + -1)
+    Max 0: ((upx$2.0.max/2) + 1)
+    Min 1: upx$2.1.min
+    Max 1: upx$2.1.max
+    Min 2: upx$2.2.min
+    Max 2: upx$2.2.max
+Edge: upx$9 -> f123
+  Footprint: 
+    Min 0: f123.0.min
+    Max 0: f123.0.max
+    Min 1: ((f123.1.min/2) + -1)
+    Max 1: ((f123.1.max/2) + 1)
+Edge: f106 -> upx$9
+  Footprint: 
+    Min 0: ((upx$9.0.min/2) + -1)
+    Max 0: ((upx$9.0.max/2) + 1)
+    Min 1: upx$9.1.min
+    Max 1: upx$9.1.max
+Edge: f122 -> f106
+  Footprint: 
+    Min 0: f106.0.min
+    Max 0: f106.0.max
+    Min 1: f106.1.min
+    Max 1: f106.1.max
+Edge: f86 -> f106
+  Footprint: 
+    Min 0: f106.0.min
+    Max 0: f106.0.max
+    Min 1: f106.1.min
+    Max 1: f106.1.max
+Edge: f32 -> f86
+  Footprint: 
+    Min 0: f86.0.min
+    Max 0: f86.0.max
+    Min 1: f86.1.min
+    Max 1: f86.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f59 -> f86
+  Footprint: 
+    Min 0: f86.0.min
+    Max 0: f86.0.max
+    Min 1: f86.1.min
+    Max 1: f86.1.max
+Edge: f48 -> f32
+  Footprint: 
+    Min 0: f32.0.min
+    Max 0: f32.0.max
+    Min 1: f32.1.min
+    Max 1: f32.1.max
+    Min 2: f32.2.min
+    Max 2: f32.2.max
+Edge: f5 -> f32
+  Footprint: 
+    Min 0: f32.0.min
+    Max 0: f32.0.max
+    Min 1: f32.1.min
+    Max 1: f32.1.max
+    Min 2: f32.2.min
+    Max 2: f32.2.max
+Edge: upx$1 -> f48
+  Footprint: 
+    Min 0: f48.0.min
+    Max 0: f48.0.max
+    Min 1: ((f48.1.min/2) + -1)
+    Max 1: ((f48.1.max/2) + 1)
+    Min 2: f48.2.min
+    Max 2: f48.2.max
+Edge: f6 -> upx$1
+  Footprint: 
+    Min 0: ((upx$1.0.min/2) + -1)
+    Max 0: ((upx$1.0.max/2) + 1)
+    Min 1: upx$1.1.min
+    Max 1: upx$1.1.max
+    Min 2: upx$1.2.min
+    Max 2: upx$1.2.max
+Edge: upx$8 -> f122
+  Footprint: 
+    Min 0: f122.0.min
+    Max 0: f122.0.max
+    Min 1: ((f122.1.min/2) + -1)
+    Max 1: ((f122.1.max/2) + 1)
+Edge: f107 -> upx$8
+  Footprint: 
+    Min 0: ((upx$8.0.min/2) + -1)
+    Max 0: ((upx$8.0.max/2) + 1)
+    Min 1: upx$8.1.min
+    Max 1: upx$8.1.max
+Edge: f121 -> f107
+  Footprint: 
+    Min 0: f107.0.min
+    Max 0: f107.0.max
+    Min 1: f107.1.min
+    Max 1: f107.1.max
+Edge: f87 -> f107
+  Footprint: 
+    Min 0: f107.0.min
+    Max 0: f107.0.max
+    Min 1: f107.1.min
+    Max 1: f107.1.max
+Edge: f33 -> f87
+  Footprint: 
+    Min 0: f87.0.min
+    Max 0: f87.0.max
+    Min 1: f87.1.min
+    Max 1: f87.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f60 -> f87
+  Footprint: 
+    Min 0: f87.0.min
+    Max 0: f87.0.max
+    Min 1: f87.1.min
+    Max 1: f87.1.max
+Edge: f47 -> f33
+  Footprint: 
+    Min 0: f33.0.min
+    Max 0: f33.0.max
+    Min 1: f33.1.min
+    Max 1: f33.1.max
+    Min 2: f33.2.min
+    Max 2: f33.2.max
+Edge: f6 -> f33
+  Footprint: 
+    Min 0: f33.0.min
+    Max 0: f33.0.max
+    Min 1: f33.1.min
+    Max 1: f33.1.max
+    Min 2: f33.2.min
+    Max 2: f33.2.max
+Edge: upx -> f47
+  Footprint: 
+    Min 0: f47.0.min
+    Max 0: f47.0.max
+    Min 1: ((f47.1.min/2) + -1)
+    Max 1: ((f47.1.max/2) + 1)
+    Min 2: f47.2.min
+    Max 2: f47.2.max
+Edge: f7 -> upx
+  Footprint: 
+    Min 0: ((upx.0.min/2) + -1)
+    Max 0: ((upx.0.max/2) + 1)
+    Min 1: upx.1.min
+    Max 1: upx.1.max
+    Min 2: upx.2.min
+    Max 2: upx.2.max
+Edge: upx$7 -> f121
+  Footprint: 
+    Min 0: f121.0.min
+    Max 0: f121.0.max
+    Min 1: ((f121.1.min/2) + -1)
+    Max 1: ((f121.1.max/2) + 1)
+Edge: f108 -> upx$7
+  Footprint: 
+    Min 0: ((upx$7.0.min/2) + -1)
+    Max 0: ((upx$7.0.max/2) + 1)
+    Min 1: upx$7.1.min
+    Max 1: upx$7.1.max
+Edge: f88 -> f108
+  Footprint: 
+    Min 0: f108.0.min
+    Max 0: f108.0.max
+    Min 1: f108.1.min
+    Max 1: f108.1.max
+Edge: f34 -> f88
+  Footprint: 
+    Min 0: f88.0.min
+    Max 0: f88.0.max
+    Min 1: f88.1.min
+    Max 1: f88.1.max
+    Min 2: 0
+    Max 2: 7
+Edge: f61 -> f88
+  Footprint: 
+    Min 0: f88.0.min
+    Max 0: f88.0.max
+    Min 1: f88.1.min
+    Max 1: f88.1.max
+Edge: f80 -> f61
+  Footprint: 
+    Min 0: f61.0.min
+    Max 0: f61.0.max
+    Min 1: f61.1.min
+    Max 1: f61.1.max
+Edge: downx$13 -> f80
+  Footprint: 
+    Min 0: f80.0.min
+    Max 0: f80.0.max
+    Min 1: ((f80.1.min*2) + -1)
+    Max 1: ((f80.1.max*2) + 2)
+Edge: f60 -> downx$13
+  Footprint: 
+    Min 0: ((downx$13.0.min*2) + -1)
+    Max 0: ((downx$13.0.max*2) + 2)
+    Min 1: downx$13.1.min
+    Max 1: downx$13.1.max
+Edge: f79 -> f60
+  Footprint: 
+    Min 0: f60.0.min
+    Max 0: f60.0.max
+    Min 1: f60.1.min
+    Max 1: f60.1.max
+Edge: downx$12 -> f79
+  Footprint: 
+    Min 0: f79.0.min
+    Max 0: f79.0.max
+    Min 1: ((f79.1.min*2) + -1)
+    Max 1: ((f79.1.max*2) + 2)
+Edge: f59 -> downx$12
+  Footprint: 
+    Min 0: ((downx$12.0.min*2) + -1)
+    Max 0: ((downx$12.0.max*2) + 2)
+    Min 1: downx$12.1.min
+    Max 1: downx$12.1.max
+Edge: f78 -> f59
+  Footprint: 
+    Min 0: f59.0.min
+    Max 0: f59.0.max
+    Min 1: f59.1.min
+    Max 1: f59.1.max
+Edge: downx$11 -> f78
+  Footprint: 
+    Min 0: f78.0.min
+    Max 0: f78.0.max
+    Min 1: ((f78.1.min*2) + -1)
+    Max 1: ((f78.1.max*2) + 2)
+Edge: f58 -> downx$11
+  Footprint: 
+    Min 0: ((downx$11.0.min*2) + -1)
+    Max 0: ((downx$11.0.max*2) + 2)
+    Min 1: downx$11.1.min
+    Max 1: downx$11.1.max
+Edge: f77 -> f58
+  Footprint: 
+    Min 0: f58.0.min
+    Max 0: f58.0.max
+    Min 1: f58.1.min
+    Max 1: f58.1.max
+Edge: downx$10 -> f77
+  Footprint: 
+    Min 0: f77.0.min
+    Max 0: f77.0.max
+    Min 1: ((f77.1.min*2) + -1)
+    Max 1: ((f77.1.max*2) + 2)
+Edge: f57 -> downx$10
+  Footprint: 
+    Min 0: ((downx$10.0.min*2) + -1)
+    Max 0: ((downx$10.0.max*2) + 2)
+    Min 1: downx$10.1.min
+    Max 1: downx$10.1.max
+Edge: f76 -> f57
+  Footprint: 
+    Min 0: f57.0.min
+    Max 0: f57.0.max
+    Min 1: f57.1.min
+    Max 1: f57.1.max
+Edge: downx$9 -> f76
+  Footprint: 
+    Min 0: f76.0.min
+    Max 0: f76.0.max
+    Min 1: ((f76.1.min*2) + -1)
+    Max 1: ((f76.1.max*2) + 2)
+Edge: f56 -> downx$9
+  Footprint: 
+    Min 0: ((downx$9.0.min*2) + -1)
+    Max 0: ((downx$9.0.max*2) + 2)
+    Min 1: downx$9.1.min
+    Max 1: downx$9.1.max
+Edge: f75 -> f56
+  Footprint: 
+    Min 0: f56.0.min
+    Max 0: f56.0.max
+    Min 1: f56.1.min
+    Max 1: f56.1.max
+Edge: downx$8 -> f75
+  Footprint: 
+    Min 0: f75.0.min
+    Max 0: f75.0.max
+    Min 1: ((f75.1.min*2) + -1)
+    Max 1: ((f75.1.max*2) + 2)
+Edge: f55 -> downx$8
+  Footprint: 
+    Min 0: ((downx$8.0.min*2) + -1)
+    Max 0: ((downx$8.0.max*2) + 2)
+    Min 1: downx$8.1.min
+    Max 1: downx$8.1.max
+Edge: f74 -> f55
+  Footprint: 
+    Min 0: f55.0.min
+    Max 0: f55.0.max
+    Min 1: f55.1.min
+    Max 1: f55.1.max
+Edge: downx$7 -> f74
+  Footprint: 
+    Min 0: f74.0.min
+    Max 0: f74.0.max
+    Min 1: ((f74.1.min*2) + -1)
+    Max 1: ((f74.1.max*2) + 2)
+Edge: f54 -> downx$7
+  Footprint: 
+    Min 0: ((downx$7.0.min*2) + -1)
+    Max 0: ((downx$7.0.max*2) + 2)
+    Min 1: downx$7.1.min
+    Max 1: downx$7.1.max
+Edge: gray -> f54
+  Footprint: 
+    Min 0: f54.0.min
+    Max 0: f54.0.max
+    Min 1: f54.1.min
+    Max 1: f54.1.max
+Edge: f7 -> f34
+  Footprint: 
+    Min 0: f34.0.min
+    Max 0: f34.0.max
+    Min 1: f34.1.min
+    Max 1: f34.1.max
+    Min 2: f34.2.min
+    Max 2: f34.2.max
+Edge: f26 -> f7
+  Footprint: 
+    Min 0: f7.0.min
+    Max 0: f7.0.max
+    Min 1: f7.1.min
+    Max 1: f7.1.max
+    Min 2: f7.2.min
+    Max 2: f7.2.max
+Edge: downx$6 -> f26
+  Footprint: 
+    Min 0: f26.0.min
+    Max 0: f26.0.max
+    Min 1: ((f26.1.min*2) + -1)
+    Max 1: ((f26.1.max*2) + 2)
+    Min 2: f26.2.min
+    Max 2: f26.2.max
+Edge: f6 -> downx$6
+  Footprint: 
+    Min 0: ((downx$6.0.min*2) + -1)
+    Max 0: ((downx$6.0.max*2) + 2)
+    Min 1: downx$6.1.min
+    Max 1: downx$6.1.max
+    Min 2: downx$6.2.min
+    Max 2: downx$6.2.max
+Edge: f25 -> f6
+  Footprint: 
+    Min 0: f6.0.min
+    Max 0: f6.0.max
+    Min 1: f6.1.min
+    Max 1: f6.1.max
+    Min 2: f6.2.min
+    Max 2: f6.2.max
+Edge: downx$5 -> f25
+  Footprint: 
+    Min 0: f25.0.min
+    Max 0: f25.0.max
+    Min 1: ((f25.1.min*2) + -1)
+    Max 1: ((f25.1.max*2) + 2)
+    Min 2: f25.2.min
+    Max 2: f25.2.max
+Edge: f5 -> downx$5
+  Footprint: 
+    Min 0: ((downx$5.0.min*2) + -1)
+    Max 0: ((downx$5.0.max*2) + 2)
+    Min 1: downx$5.1.min
+    Max 1: downx$5.1.max
+    Min 2: downx$5.2.min
+    Max 2: downx$5.2.max
+Edge: f24 -> f5
+  Footprint: 
+    Min 0: f5.0.min
+    Max 0: f5.0.max
+    Min 1: f5.1.min
+    Max 1: f5.1.max
+    Min 2: f5.2.min
+    Max 2: f5.2.max
+Edge: downx$4 -> f24
+  Footprint: 
+    Min 0: f24.0.min
+    Max 0: f24.0.max
+    Min 1: ((f24.1.min*2) + -1)
+    Max 1: ((f24.1.max*2) + 2)
+    Min 2: f24.2.min
+    Max 2: f24.2.max
+Edge: f4 -> downx$4
+  Footprint: 
+    Min 0: ((downx$4.0.min*2) + -1)
+    Max 0: ((downx$4.0.max*2) + 2)
+    Min 1: downx$4.1.min
+    Max 1: downx$4.1.max
+    Min 2: downx$4.2.min
+    Max 2: downx$4.2.max
+Edge: f23 -> f4
+  Footprint: 
+    Min 0: f4.0.min
+    Max 0: f4.0.max
+    Min 1: f4.1.min
+    Max 1: f4.1.max
+    Min 2: f4.2.min
+    Max 2: f4.2.max
+Edge: downx$3 -> f23
+  Footprint: 
+    Min 0: f23.0.min
+    Max 0: f23.0.max
+    Min 1: ((f23.1.min*2) + -1)
+    Max 1: ((f23.1.max*2) + 2)
+    Min 2: f23.2.min
+    Max 2: f23.2.max
+Edge: f3 -> downx$3
+  Footprint: 
+    Min 0: ((downx$3.0.min*2) + -1)
+    Max 0: ((downx$3.0.max*2) + 2)
+    Min 1: downx$3.1.min
+    Max 1: downx$3.1.max
+    Min 2: downx$3.2.min
+    Max 2: downx$3.2.max
+Edge: f22 -> f3
+  Footprint: 
+    Min 0: f3.0.min
+    Max 0: f3.0.max
+    Min 1: f3.1.min
+    Max 1: f3.1.max
+    Min 2: f3.2.min
+    Max 2: f3.2.max
+Edge: downx$2 -> f22
+  Footprint: 
+    Min 0: f22.0.min
+    Max 0: f22.0.max
+    Min 1: ((f22.1.min*2) + -1)
+    Max 1: ((f22.1.max*2) + 2)
+    Min 2: f22.2.min
+    Max 2: f22.2.max
+Edge: f2 -> downx$2
+  Footprint: 
+    Min 0: ((downx$2.0.min*2) + -1)
+    Max 0: ((downx$2.0.max*2) + 2)
+    Min 1: downx$2.1.min
+    Max 1: downx$2.1.max
+    Min 2: downx$2.2.min
+    Max 2: downx$2.2.max
+Edge: f21 -> f2
+  Footprint: 
+    Min 0: f2.0.min
+    Max 0: f2.0.max
+    Min 1: f2.1.min
+    Max 1: f2.1.max
+    Min 2: f2.2.min
+    Max 2: f2.2.max
+Edge: downx$1 -> f21
+  Footprint: 
+    Min 0: f21.0.min
+    Max 0: f21.0.max
+    Min 1: ((f21.1.min*2) + -1)
+    Max 1: ((f21.1.max*2) + 2)
+    Min 2: f21.2.min
+    Max 2: f21.2.max
+Edge: f1 -> downx$1
+  Footprint: 
+    Min 0: ((downx$1.0.min*2) + -1)
+    Max 0: ((downx$1.0.max*2) + 2)
+    Min 1: downx$1.1.min
+    Max 1: downx$1.1.max
+    Min 2: downx$1.2.min
+    Max 2: downx$1.2.max
+Edge: f20 -> f1
+  Footprint: 
+    Min 0: f1.0.min
+    Max 0: f1.0.max
+    Min 1: f1.1.min
+    Max 1: f1.1.max
+    Min 2: f1.2.min
+    Max 2: f1.2.max
+Edge: downx -> f20
+  Footprint: 
+    Min 0: f20.0.min
+    Max 0: f20.0.max
+    Min 1: ((f20.1.min*2) + -1)
+    Max 1: ((f20.1.max*2) + 2)
+    Min 2: f20.2.min
+    Max 2: f20.2.max
+Edge: f0 -> downx
+  Footprint: 
+    Min 0: ((downx.0.min*2) + -1)
+    Max 0: ((downx.0.max*2) + 2)
+    Min 1: downx.1.min
+    Max 1: downx.1.max
+    Min 2: downx.2.min
+    Max 2: downx.2.max
+Edge: gray -> f0
+  Footprint: 
+    Min 0: f0.0.min
+    Max 0: f0.0.max
+    Min 1: f0.1.min
+    Max 1: f0.1.max
+Edge: remap -> f0
+  Footprint: 
+    Min 0: (0 - (f0.2.max*256))
+    Max 0: (1792 - (f0.2.min*256))
+Edge: floating -> gray
+  Footprint: 
+    Min 0: gray.0.min
+    Max 0: gray.0.max
+    Min 1: gray.1.min
+    Max 1: gray.1.max
+    Min 2: 0
+    Max 2: 2
+Edge: repeat_edge -> floating
+  Footprint: 
+    Min 0: floating.0.min
+    Max 0: floating.0.max
+    Min 1: floating.1.min
+    Max 1: floating.1.max
+    Min 2: floating.2.min
+    Max 2: floating.2.max
+Edge: lambda_0 -> repeat_edge
+  Footprint: 
+    Min 0: max(min(repeat_edge.0.min, 1535), 0)
+    Max 0: max(min(repeat_edge.0.max, 1535), 0)
+    Min 1: max(min(repeat_edge.1.min, 2559), 0)
+    Max 1: max(min(repeat_edge.1.max, 2559), 0)
+    Min 2: max(min(repeat_edge.2.min, 2), 0)
+    Max 2: max(min(repeat_edge.2.max, 2), 0)
+Edge: input_im -> lambda_0
+  Footprint: 
+    Min 0: lambda_0.0.min
+    Max 0: lambda_0.0.max
+    Min 1: lambda_0.1.min
+    Max 1: lambda_0.1.max
+    Min 2: lambda_0.2.min
+    Max 2: lambda_0.2.max
+[...........-                                                                  ][...............................................\                              ][.......................................................................|      ]
+** Optimal schedule:
+State with cost 18591601647.761757:
+
+realize: gray
+realize: remap
+realize: output
+realize: f7
+realize: f20
+realize: f21
+realize: f22
+realize: f23
+realize: f24
+realize: f25
+realize: downx$10
+realize: upx$9
+realize: f58
+realize: f59
+realize: f76
+realize: f82
+realize: f75
+realize: downx$13
+realize: f79
+realize: f74
+realize: f103
+realize: upx$8
+realize: upx$7
+realize: upx$10
+realize: upx$11
+gray 2302 3326 t *
+ inlined: lambda_0 3
+ inlined: input_im 3
+ inlined: repeat_edge 3
+ inlined: floating 3
+remap 3585 t *
+f20 8 32 8 t
+ realize: downx
+ downx 144 106 1 t *
+  inlined: f0 4
+ f20 144 52 1 t *
+f21 4 16 8 t
+ realize: downx$1
+ downx$1 144 106 1 t *
+  inlined: f1 4
+ f21 144 52 1 t *
+f22 2 16 2 t
+ realize: downx$2
+ f22 1 1 4
+  downx$2 143 54 1 t *
+   inlined: f2 4
+  f22 143 26 1 t *
+f23 1 52 8 t
+ realize: downx$3
+ downx$3 142 10 1 t *
+  inlined: f3 4
+ f23 142 4 1 t *
+f24 70 102 8 t *
+ inlined: f4 16
+ inlined: downx$4 4
+f25 34 50 8 t *
+ inlined: f5 16
+ inlined: downx$5 4
+f7 16 24 8 t *
+ inlined: f6 16
+ inlined: downx$6 4
+ inlined: f26 1
+f74 8 32 t
+ realize: downx$7
+ f74 1 52
+  downx$7 144 4 t *
+   inlined: f54 4
+  f74 144 1 t *
+f75 2 16 t
+ realize: downx$8
+ f75 1 52
+  downx$8 287 4 t *
+   inlined: f55 4
+  f75 287 1 t *
+f76 2 16 t
+ realize: downx$9
+ f76 1 26
+  downx$9 143 4 t *
+   inlined: f56 4
+  f76 143 1 t *
+downx$10 142 414 t *
+ inlined: f57 4
+f58 142 206 t *
+ inlined: f77 1
+f59 70 102 t *
+ inlined: downx$11 4
+ inlined: f78 1
+f79 34 50 t *
+ inlined: downx$12 4
+downx$13 16 50 t *
+ inlined: f60 4
+upx$7 28 24 t *
+ inlined: f34 4
+ inlined: f61 2
+ inlined: f80 2
+ inlined: f88 2
+ inlined: f108 2
+upx$8 52 44 t *
+ inlined: f6 4
+ inlined: f47 4
+ inlined: upx 8
+ inlined: f33 4
+ inlined: f121 2
+ inlined: f60 2
+ inlined: f87 2
+ inlined: f107 2
+upx$9 1 21 t
+ realize: f106
+ upx$9 1 4
+  f106 52 1 t *
+   inlined: f5 2
+   inlined: f6 8
+   inlined: f48 2
+   inlined: upx$1 4
+   inlined: f32 2
+   inlined: f86 1
+   inlined: f122 1
+  upx$9 100 1 t *
+upx$10 1 41 t
+ realize: f105
+ upx$10 1 4
+  f105 100 1 t *
+   inlined: f4 2
+   inlined: f5 8
+   inlined: f49 2
+   inlined: upx$2 4
+   inlined: f31 2
+   inlined: f85 1
+   inlined: f123 1
+  upx$10 196 1 t *
+upx$11 1 324 t
+ realize: f104
+ f104 196 1 t *
+  inlined: f4 8
+  inlined: f3 2
+  inlined: upx$3 4
+  inlined: f50 2
+  inlined: f30 2
+  inlined: f57 1
+  inlined: f84 1
+  inlined: f124 1
+ upx$11 388 1 t *
+f103 388 644 t *
+ inlined: f2 2
+ inlined: f3 8
+ inlined: upx$4 4
+ inlined: f29 2
+ inlined: f83 1
+ inlined: f51 2
+ inlined: f56 1
+ inlined: f125 1
+f82 770 1282 t *
+ inlined: f1 2
+ inlined: f2 8
+ inlined: f28 2
+ inlined: upx$5 4
+ inlined: f52 2
+ inlined: f55 1
+output 4 8 1 t
+ realize: f126
+ f126 1 2 t
+  realize: upx$12
+  upx$12 194 43 t *
+  f126 194 81 t *
+ output 2 1 1 t
+  realize: f102
+  realize: upx$13
+  output 1 320 1
+   realize: f101
+   f102 98 3 t *
+   upx$13 192 3 t *
+   f101 192 1 t *
+    inlined: f0 2
+    inlined: f1 8
+    inlined: f27 2
+    inlined: upx$6 4
+    inlined: f53 2
+    inlined: f54 1
+    inlined: f81 1
+    inlined: f127 1
+   output 192 1 3 t *
+    inlined: lambda_0 1
+    inlined: input_im 1
+    inlined: repeat_edge 1
+    inlined: floating 1
+    inlined: color 1
+Task size for gray: 207
+Task size for remap: 224
+Task size for f7: 12
+Task size for f20: 16
+Task size for f23: 26
+Task size for f24: 51
+Task size for f25: 25
+Task size for downx$10: 25
+Task size for f58: 12
+Task size for f82: 80
+Task size for f103: 40
+Task size for upx$11: 20
+Folding discount for f102: 0.018519
+Folding discount for upx$13: 0.018519
+Folding discount for f105: 0.250000
+Folding discount for f106: 0.250000
+Folding discount for downx$9: 0.074074
+Folding discount for downx$8: 0.037736
+Folding discount for downx$7: 0.037736
+Folding discount for downx$2: 0.250000
+Func input_im is inlined
+Func input_im has costs: 278286336.000000 = 278286336.000000 + 0.000000
+Func lambda_0 is inlined
+Func lambda_0 has costs: 278286336.000000 = 278286336.000000 + 0.000000
+Func repeat_edge is inlined
+Func repeat_edge has costs: 695715840.000000 = 695715840.000000 + 0.000000
+Func floating is inlined
+Func floating has costs: 695715840.000000 = 695715840.000000 + 0.000000
+Func gray has costs: 674353152.000000 = 674353152.000000 + 0.000000
+Func remap has costs: 158048.000000 = 158048.000000 + 0.000000
+Func f0 is inlined
+Func f0 has costs: 11164188672.000000 = 11164188672.000000 + 0.000000
+Func downx has costs: 5906595364.617813 = 4251451392.000000 + 1655143972.617813
+Func f20 has costs: 2381227197.066289 = 2079494400.000000 + 301732797.066289
+Func f1 is inlined
+Func f1 has costs: 1035321856.000000 = 1035321856.000000 + 0.000000
+Func downx$1 has costs: 5733953551.698455 = 1062862848.000000 + 4671090703.698455
+Func f21 has costs: 593778159.266572 = 518344960.000000 + 75433199.266572
+Func f2 is inlined
+Func f2 has costs: 262818816.000000 = 262818816.000000 + 0.000000
+Func downx$2 has costs: 852042152.735907 = 270729216.000000 + 581312936.735907
+Func f22 has costs: 143295817.269552 = 129724416.000000 + 13571401.269552
+Func f3 is inlined
+Func f3 has costs: 72725504.000000 = 72725504.000000 + 0.000000
+Func downx$3 has costs: 153492998.047074 = 81469440.000000 + 72023558.047074
+Func f23 has costs: 34013497.251795 = 32274432.000000 + 1739065.251795
+Func f4 is inlined
+Func f4 has costs: 23880704.000000 = 23880704.000000 + 0.000000
+Func downx$4 is inlined
+Func downx$4 has costs: 29140992.000000 = 29140992.000000 + 0.000000
+Func f24 has costs: 24824739.987166 = 15980544.000000 + 8844195.987166
+Func f5 is inlined
+Func f5 has costs: 6429696.000000 = 6429696.000000 + 0.000000
+Func downx$5 is inlined
+Func downx$5 has costs: 7936000.000000 = 7936000.000000 + 0.000000
+Func f25 has costs: 7594528.164185 = 6528000.000000 + 1066528.164185
+Func f6 is inlined
+Func f6 has costs: 1546240.000000 = 1546240.000000 + 0.000000
+Func downx$6 is inlined
+Func downx$6 has costs: 1523712.000000 = 1523712.000000 + 0.000000
+Func f26 is inlined
+Func f26 has costs: 380928.000000 = 380928.000000 + 0.000000
+Func f7 has costs: 726019.727765 = 602112.000000 + 123907.727765
+Func f34 is inlined
+Func f34 has costs: 49152.000000 = 49152.000000 + 0.000000
+Func f54 is inlined
+Func f54 has costs: 415236096.000000 = 415236096.000000 + 0.000000
+Func downx$7 has costs: 2061515938.976623 = 406388736.000000 + 1655127202.976623
+Func f74 has costs: 206101920.000000 = 198775200.000000 + 7326720.000000
+Func f55 is inlined
+Func f55 has costs: 103950528.000000 = 103950528.000000 + 0.000000
+Func downx$8 has costs: 308032178.507664 = 101597184.000000 + 206434994.507664
+Func f75 has costs: 52297226.818785 = 49720320.000000 + 2576906.818785
+Func f56 is inlined
+Func f56 has costs: 26032512.000000 = 26032512.000000 + 0.000000
+Func downx$9 has costs: 51569172.972339 = 25878528.000000 + 25690644.972339
+Func f76 has costs: 12861836.447291 = 12400128.000000 + 461708.447291
+Func f57 is inlined
+Func f57 has costs: 3639168.000000 = 3639168.000000 + 0.000000
+Func downx$10 has costs: 9383085.643767 = 6200064.000000 + 3183021.643767
+Func f77 is inlined
+Func f77 has costs: 2847744.000000 = 2847744.000000 + 0.000000
+Func f58 has costs: 1706864.195513 = 593280.000000 + 1113584.195513
+Func downx$11 is inlined
+Func downx$11 has costs: 2820096.000000 = 2820096.000000 + 0.000000
+Func f78 is inlined
+Func f78 has costs: 705024.000000 = 705024.000000 + 0.000000
+Func f59 has costs: 684621.934792 = 293760.000000 + 390861.934792
+Func downx$12 is inlined
+Func downx$12 has costs: 768000.000000 = 768000.000000 + 0.000000
+Func f79 has costs: 671134.331076 = 624000.000000 + 47134.331076
+Func f60 is inlined
+Func f60 has costs: 97536.000000 = 97536.000000 + 0.000000
+Func downx$13 has costs: 587875.999659 = 582400.000000 + 5475.999659
+Func f80 is inlined
+Func f80 has costs: 147456.000000 = 147456.000000 + 0.000000
+Func f61 is inlined
+Func f61 has costs: 18432.000000 = 18432.000000 + 0.000000
+Func f88 is inlined
+Func f88 has costs: 165888.000000 = 165888.000000 + 0.000000
+Func f108 is inlined
+Func f108 has costs: 18432.000000 = 18432.000000 + 0.000000
+Func upx$7 has costs: 223965.917155 = 208896.000000 + 15069.917155
+Func f121 is inlined
+Func f121 has costs: 295680.000000 = 295680.000000 + 0.000000
+Func upx is inlined
+Func upx has costs: 1419264.000000 = 1419264.000000 + 0.000000
+Func f47 is inlined
+Func f47 has costs: 709632.000000 = 709632.000000 + 0.000000
+Func f33 is inlined
+Func f33 has costs: 394240.000000 = 394240.000000 + 0.000000
+Func f87 is inlined
+Func f87 has costs: 532224.000000 = 532224.000000 + 0.000000
+Func f107 is inlined
+Func f107 has costs: 137984.000000 = 137984.000000 + 0.000000
+Func upx$8 has costs: 479150.833173 = 335104.000000 + 144046.833173
+Func f122 is inlined
+Func f122 has costs: 282240.000000 = 282240.000000 + 0.000000
+Func upx$1 is inlined
+Func upx$1 has costs: 1354752.000000 = 1354752.000000 + 0.000000
+Func f48 is inlined
+Func f48 has costs: 677376.000000 = 677376.000000 + 0.000000
+Func f32 is inlined
+Func f32 has costs: 376320.000000 = 376320.000000 + 0.000000
+Func f86 is inlined
+Func f86 has costs: 508032.000000 = 508032.000000 + 0.000000
+Func f106 has costs: 1584808.379458 = 338688.000000 + 1246120.379458
+Func upx$9 has costs: 1190556.788746 = 1188096.000000 + 2460.788746
+Func f123 is inlined
+Func f123 has costs: 1023360.000000 = 1023360.000000 + 0.000000
+Func upx$2 is inlined
+Func upx$2 has costs: 4912128.000000 = 4912128.000000 + 0.000000
+Func f49 is inlined
+Func f49 has costs: 2456064.000000 = 2456064.000000 + 0.000000
+Func f31 is inlined
+Func f31 has costs: 1364480.000000 = 1364480.000000 + 0.000000
+Func f85 is inlined
+Func f85 has costs: 1842048.000000 = 1842048.000000 + 0.000000
+Func f105 has costs: 11589764.392139 = 1228032.000000 + 10361732.392139
+Func upx$10 has costs: 2243212.500000 = 2230400.000000 + 12812.500000
+Func f124 is inlined
+Func f124 has costs: 3888000.000000 = 3888000.000000 + 0.000000
+Func upx$3 is inlined
+Func upx$3 has costs: 18662400.000000 = 18662400.000000 + 0.000000
+Func f50 is inlined
+Func f50 has costs: 9331200.000000 = 9331200.000000 + 0.000000
+Func f30 is inlined
+Func f30 has costs: 5184000.000000 = 5184000.000000 + 0.000000
+Func f84 is inlined
+Func f84 has costs: 6998400.000000 = 6998400.000000 + 0.000000
+Func f104 has costs: 86833811.358761 = 2332800.000000 + 84501011.358761
+Func upx$11 has costs: 8706001.500000 = 8636544.000000 + 69457.500000
+Func f125 is inlined
+Func f125 has costs: 15146880.000000 = 15146880.000000 + 0.000000
+Func upx$4 is inlined
+Func upx$4 has costs: 72705024.000000 = 72705024.000000 + 0.000000
+Func f51 is inlined
+Func f51 has costs: 36352512.000000 = 36352512.000000 + 0.000000
+Func f29 is inlined
+Func f29 has costs: 20195840.000000 = 20195840.000000 + 0.000000
+Func f83 is inlined
+Func f83 has costs: 27264384.000000 = 27264384.000000 + 0.000000
+Func f103 has costs: 691597479.164012 = 9088128.000000 + 682509351.164012
+Func upx$12 has costs: 47185325.960082 = 37427200.000000 + 9758125.960082
+Func f126 has costs: 74311964.075088 = 70502400.000000 + 3809564.075088
+Func upx$5 is inlined
+Func upx$5 has costs: 286511616.000000 = 286511616.000000 + 0.000000
+Func f52 is inlined
+Func f52 has costs: 143255808.000000 = 143255808.000000 + 0.000000
+Func f28 is inlined
+Func f28 has costs: 79586560.000000 = 79586560.000000 + 0.000000
+Func f82 has costs: 5574239146.942026 = 115400512.000000 + 5458838634.942026
+Func f102 has costs: 168187253.925318 = 77635584.000000 + 90551669.925318
+Func upx$13 has costs: 136725691.470475 = 135364608.000000 + 1361083.470475
+Func f127 is inlined
+Func f127 has costs: 235929600.000000 = 235929600.000000 + 0.000000
+Func upx$6 is inlined
+Func upx$6 has costs: 1132462080.000000 = 1132462080.000000 + 0.000000
+Func f53 is inlined
+Func f53 has costs: 566231040.000000 = 566231040.000000 + 0.000000
+Func f27 is inlined
+Func f27 has costs: 314572800.000000 = 314572800.000000 + 0.000000
+Func f81 is inlined
+Func f81 has costs: 424673280.000000 = 424673280.000000 + 0.000000
+Func f101 has costs: 8126652119.292890 = 141557760.000000 + 7985094359.292890
+Func color is inlined
+Func color has costs: 660602880.000000 = 660602880.000000 + 0.000000
+Func output has costs: 1895313491.041304 = 235929600.000000 + 1659383891.041304
+XXXN 235929600.000000
+XXXI 660602880.000000
+XXXN 141557760.000000
+XXXI 424673280.000000
+XXXI 314572800.000000
+XXXI 566231040.000000
+XXXI 1132462080.000000
+XXXI 235929600.000000
+XXXN 135364608.000000
+XXXN 77635584.000000
+XXXN 115400512.000000
+XXXI 79586560.000000
+XXXI 143255808.000000
+XXXI 286511616.000000
+XXXN 70502400.000000
+XXXN 37427200.000000
+XXXN 9088128.000000
+XXXI 27264384.000000
+XXXI 20195840.000000
+XXXI 36352512.000000
+XXXI 72705024.000000
+XXXI 15146880.000000
+XXXN 8636544.000000
+XXXN 2332800.000000
+XXXI 6998400.000000
+XXXI 5184000.000000
+XXXI 9331200.000000
+XXXI 18662400.000000
+XXXI 3888000.000000
+XXXN 2230400.000000
+XXXN 1228032.000000
+XXXI 1842048.000000
+XXXI 1364480.000000
+XXXI 2456064.000000
+XXXI 4912128.000000
+XXXI 1023360.000000
+XXXN 1188096.000000
+XXXN 338688.000000
+XXXI 508032.000000
+XXXI 376320.000000
+XXXI 677376.000000
+XXXI 1354752.000000
+XXXI 282240.000000
+XXXN 335104.000000
+XXXI 137984.000000
+XXXI 532224.000000
+XXXI 394240.000000
+XXXI 709632.000000
+XXXI 1419264.000000
+XXXI 295680.000000
+XXXN 208896.000000
+XXXI 18432.000000
+XXXI 165888.000000
+XXXI 18432.000000
+XXXI 147456.000000
+XXXN 582400.000000
+XXXI 97536.000000
+XXXN 624000.000000
+XXXI 768000.000000
+XXXN 293760.000000
+XXXI 705024.000000
+XXXI 2820096.000000
+XXXN 593280.000000
+XXXI 2847744.000000
+XXXN 6200064.000000
+XXXI 3639168.000000
+XXXN 12400128.000000
+XXXN 25878528.000000
+XXXI 26032512.000000
+XXXN 49720320.000000
+XXXN 101597184.000000
+XXXI 103950528.000000
+XXXN 198775200.000000
+XXXN 406388736.000000
+XXXI 415236096.000000
+XXXI 49152.000000
+XXXN 602112.000000
+XXXI 380928.000000
+XXXI 1523712.000000
+XXXI 1546240.000000
+XXXN 6528000.000000
+XXXI 7936000.000000
+XXXI 6429696.000000
+XXXN 15980544.000000
+XXXI 29140992.000000
+XXXI 23880704.000000
+XXXN 32274432.000000
+XXXN 81469440.000000
+XXXI 72725504.000000
+XXXN 129724416.000000
+XXXN 270729216.000000
+XXXI 262818816.000000
+XXXN 518344960.000000
+XXXN 1062862848.000000
+XXXI 1035321856.000000
+XXXN 2079494400.000000
+XXXN 4251451392.000000
+XXXI 11164188672.000000
+XXXN 158048.000000
+XXXN 674353152.000000
+XXXI 695715840.000000
+XXXI 695715840.000000
+XXXI 278286336.000000
+XXXI 278286336.000000
+XXXE 1659383891.041304
+XXXE 4256688.064681
+XXXE 0.000000
+XXXE 1655127202.976623
+XXXE 3732480.000000
+XXXE 7981361879.292890
+XXXE 6326234676.316267
+XXXE 1655127202.976623
+XXXE 1655143972.617813
+XXXE 4671090703.698455
+XXXE 4671090703.698455
+XXXE 4671090703.698455
+XXXE 3732480.000000
+XXXE 1361083.470475
+XXXE 13928845.634768
+XXXE 76622824.290549
+XXXE 5252403640.434362
+XXXE 206434994.507664
+XXXE 4671090703.698455
+XXXE 581312936.735907
+XXXE 581312936.735907
+XXXE 581312936.735907
+XXXE 3809564.075088
+XXXE 9758125.960082
+XXXE 3482211.408692
+XXXE 679027139.755320
+XXXE 653336494.782981
+XXXE 25690644.972339
+XXXE 581312936.735907
+XXXE 72023558.047074
+XXXE 72023558.047074
+XXXE 72023558.047074
+XXXE 3482211.408692
+XXXE 69457.500000
+XXXE 450235.680755
+XXXE 84050775.678006
+XXXE 80867754.034240
+XXXE 3183021.643767
+XXXE 72023558.047074
+XXXE 8844195.987166
+XXXE 8844195.987166
+XXXE 8844195.987166
+XXXE 450235.680755
+XXXE 12812.500000
+XXXE 60146.305996
+XXXE 10301586.086143
+XXXE 9910724.151351
+XXXE 390861.934792
+XXXE 8844195.987166
+XXXE 1066528.164185
+XXXE 1066528.164185
+XXXE 1066528.164185
+XXXE 60146.305996
+XXXE 2460.788746
+XXXE 8550.156431
+XXXE 1237570.223027
+XXXE 1190435.891951
+XXXE 47134.331076
+XXXE 123907.727765
+XXXE 1066528.164185
+XXXE 123907.727765
+XXXE 123907.727765
+XXXE 8550.156431
+XXXE 144046.833173
+XXXE 1360.955547
+XXXE 142685.877627
+XXXE 137209.877968
+XXXE 5475.999659
+XXXE 13302.150202
+XXXE 123907.727765
+XXXE 13302.150202
+XXXE 13302.150202
+XXXE 1360.955547
+XXXE 15069.917155
+XXXE 15069.917155
+XXXE 13302.150202
+XXXE 1767.766953
+XXXE 1767.766953
+XXXE 1767.766953
+XXXE 5475.999659
+XXXE 5475.999659
+XXXE 47134.331076
+XXXE 47134.331076
+XXXE 390861.934792
+XXXE 390861.934792
+XXXE 390861.934792
+XXXE 1113584.195513
+XXXE 1113584.195513
+XXXE 3183021.643767
+XXXE 3183021.643767
+XXXE 461708.447291
+XXXE 25690644.972339
+XXXE 25690644.972339
+XXXE 2576906.818785
+XXXE 206434994.507664
+XXXE 206434994.507664
+XXXE 7326720.000000
+XXXE 1655127202.976623
+XXXE 1655127202.976623
+XXXE 13302.150202
+XXXE 123907.727765
+XXXE 123907.727765
+XXXE 123907.727765
+XXXE 123907.727765
+XXXE 1066528.164185
+XXXE 1066528.164185
+XXXE 1066528.164185
+XXXE 8844195.987166
+XXXE 8844195.987166
+XXXE 8844195.987166
+XXXE 1739065.251795
+XXXE 72023558.047074
+XXXE 72023558.047074
+XXXE 13571401.269552
+XXXE 581312936.735907
+XXXE 581312936.735907
+XXXE 75433199.266572
+XXXE 4671090703.698455
+XXXE 4671090703.698455
+XXXE 301732797.066289
+XXXE 1655143972.617813
+XXXE 1655127202.976623
+XXXE 16769.641190
+XXXE 0.000000
+XXXE 0.000000
+XXXE 0.000000
+XXXE 0.000000
