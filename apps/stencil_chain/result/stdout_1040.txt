@@ -1,0 +1,4 @@
+bin/stencil_chain.generator -g stencil_chain -o ./bin -f stencil_chain_auto_schedule target=host-new_autoscheduler-no_runtime auto_schedule=true
+g++ -std=c++11 -I ../../include/ -I ../../tools/ -I ../../apps/support/ -I./bin -Wall -O3 process.cpp bin/stencil_chain.a bin/stencil_chain_auto_schedule.a -o bin/process  -ldl -lpthread -lz -lpng16  -ljpeg -I/usr/include/libpng16 -I/usr/include/libpng16/..   
+./bin/process ../images/rgb.png 10 ./bin/out.png
+Auto-scheduled time: 24.0152ms
