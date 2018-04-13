@@ -1,0 +1,1 @@
+bin/local_laplacian.generator -g local_laplacian -o ./bin -f local_laplacian_auto_schedule target=host-new_autoscheduler-no_runtime auto_schedule=true
