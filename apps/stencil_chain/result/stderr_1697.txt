@@ -1,0 +1,641 @@
+Dropout seed = 1697
+Node: output
+  Symbolic region: 
+    output.0.min, output.0.max
+    output.1.min, output.1.max
+  Arithmetic cost: 10.000000
+  Inlined cost: 6.000000
+Node: stage_31
+  Symbolic region: 
+    stage_31.0.min, stage_31.0.max
+    stage_31.1.min, stage_31.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_30
+  Symbolic region: 
+    stage_30.0.min, stage_30.0.max
+    stage_30.1.min, stage_30.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_29
+  Symbolic region: 
+    stage_29.0.min, stage_29.0.max
+    stage_29.1.min, stage_29.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_28
+  Symbolic region: 
+    stage_28.0.min, stage_28.0.max
+    stage_28.1.min, stage_28.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_27
+  Symbolic region: 
+    stage_27.0.min, stage_27.0.max
+    stage_27.1.min, stage_27.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_26
+  Symbolic region: 
+    stage_26.0.min, stage_26.0.max
+    stage_26.1.min, stage_26.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_25
+  Symbolic region: 
+    stage_25.0.min, stage_25.0.max
+    stage_25.1.min, stage_25.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_24
+  Symbolic region: 
+    stage_24.0.min, stage_24.0.max
+    stage_24.1.min, stage_24.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_23
+  Symbolic region: 
+    stage_23.0.min, stage_23.0.max
+    stage_23.1.min, stage_23.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_22
+  Symbolic region: 
+    stage_22.0.min, stage_22.0.max
+    stage_22.1.min, stage_22.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_21
+  Symbolic region: 
+    stage_21.0.min, stage_21.0.max
+    stage_21.1.min, stage_21.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_20
+  Symbolic region: 
+    stage_20.0.min, stage_20.0.max
+    stage_20.1.min, stage_20.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_19
+  Symbolic region: 
+    stage_19.0.min, stage_19.0.max
+    stage_19.1.min, stage_19.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_18
+  Symbolic region: 
+    stage_18.0.min, stage_18.0.max
+    stage_18.1.min, stage_18.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_17
+  Symbolic region: 
+    stage_17.0.min, stage_17.0.max
+    stage_17.1.min, stage_17.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_16
+  Symbolic region: 
+    stage_16.0.min, stage_16.0.max
+    stage_16.1.min, stage_16.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_15
+  Symbolic region: 
+    stage_15.0.min, stage_15.0.max
+    stage_15.1.min, stage_15.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_14
+  Symbolic region: 
+    stage_14.0.min, stage_14.0.max
+    stage_14.1.min, stage_14.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_13
+  Symbolic region: 
+    stage_13.0.min, stage_13.0.max
+    stage_13.1.min, stage_13.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_12
+  Symbolic region: 
+    stage_12.0.min, stage_12.0.max
+    stage_12.1.min, stage_12.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_11
+  Symbolic region: 
+    stage_11.0.min, stage_11.0.max
+    stage_11.1.min, stage_11.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_10
+  Symbolic region: 
+    stage_10.0.min, stage_10.0.max
+    stage_10.1.min, stage_10.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_9
+  Symbolic region: 
+    stage_9.0.min, stage_9.0.max
+    stage_9.1.min, stage_9.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_8
+  Symbolic region: 
+    stage_8.0.min, stage_8.0.max
+    stage_8.1.min, stage_8.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_7
+  Symbolic region: 
+    stage_7.0.min, stage_7.0.max
+    stage_7.1.min, stage_7.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_6
+  Symbolic region: 
+    stage_6.0.min, stage_6.0.max
+    stage_6.1.min, stage_6.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_5
+  Symbolic region: 
+    stage_5.0.min, stage_5.0.max
+    stage_5.1.min, stage_5.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_4
+  Symbolic region: 
+    stage_4.0.min, stage_4.0.max
+    stage_4.1.min, stage_4.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_3
+  Symbolic region: 
+    stage_3.0.min, stage_3.0.max
+    stage_3.1.min, stage_3.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_2
+  Symbolic region: 
+    stage_2.0.min, stage_2.0.max
+    stage_2.1.min, stage_2.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_1
+  Symbolic region: 
+    stage_1.0.min, stage_1.0.max
+    stage_1.1.min, stage_1.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: stage_0
+  Symbolic region: 
+    stage_0.0.min, stage_0.0.max
+    stage_0.1.min, stage_0.1.max
+  Arithmetic cost: 354.000000
+  Inlined cost: 350.000000
+Node: repeat_edge
+  Symbolic region: 
+    repeat_edge.0.min, repeat_edge.0.max
+    repeat_edge.1.min, repeat_edge.1.max
+  Arithmetic cost: 18.000000
+  Inlined cost: 14.000000
+Node: lambda_0
+  Symbolic region: 
+    lambda_0.0.min, lambda_0.0.max
+    lambda_0.1.min, lambda_0.1.max
+  Arithmetic cost: 10.000000
+  Inlined cost: 6.000000
+Node: input_im
+  Symbolic region: 
+    input_im.0.min, input_im.0.max
+    input_im.1.min, input_im.1.max
+  Arithmetic cost: 10.000000
+  Inlined cost: 6.000000
+Edge: stage_31 -> output
+  Footprint: 
+    Min 0: output.0.min
+    Max 0: output.0.max
+    Min 1: output.1.min
+    Max 1: output.1.max
+Edge: stage_30 -> stage_31
+  Footprint: 
+    Min 0: (stage_31.0.min + -2)
+    Max 0: (stage_31.0.max + 2)
+    Min 1: (stage_31.1.min + -2)
+    Max 1: (stage_31.1.max + 2)
+Edge: stage_29 -> stage_30
+  Footprint: 
+    Min 0: (stage_30.0.min + -2)
+    Max 0: (stage_30.0.max + 2)
+    Min 1: (stage_30.1.min + -2)
+    Max 1: (stage_30.1.max + 2)
+Edge: stage_28 -> stage_29
+  Footprint: 
+    Min 0: (stage_29.0.min + -2)
+    Max 0: (stage_29.0.max + 2)
+    Min 1: (stage_29.1.min + -2)
+    Max 1: (stage_29.1.max + 2)
+Edge: stage_27 -> stage_28
+  Footprint: 
+    Min 0: (stage_28.0.min + -2)
+    Max 0: (stage_28.0.max + 2)
+    Min 1: (stage_28.1.min + -2)
+    Max 1: (stage_28.1.max + 2)
+Edge: stage_26 -> stage_27
+  Footprint: 
+    Min 0: (stage_27.0.min + -2)
+    Max 0: (stage_27.0.max + 2)
+    Min 1: (stage_27.1.min + -2)
+    Max 1: (stage_27.1.max + 2)
+Edge: stage_25 -> stage_26
+  Footprint: 
+    Min 0: (stage_26.0.min + -2)
+    Max 0: (stage_26.0.max + 2)
+    Min 1: (stage_26.1.min + -2)
+    Max 1: (stage_26.1.max + 2)
+Edge: stage_24 -> stage_25
+  Footprint: 
+    Min 0: (stage_25.0.min + -2)
+    Max 0: (stage_25.0.max + 2)
+    Min 1: (stage_25.1.min + -2)
+    Max 1: (stage_25.1.max + 2)
+Edge: stage_23 -> stage_24
+  Footprint: 
+    Min 0: (stage_24.0.min + -2)
+    Max 0: (stage_24.0.max + 2)
+    Min 1: (stage_24.1.min + -2)
+    Max 1: (stage_24.1.max + 2)
+Edge: stage_22 -> stage_23
+  Footprint: 
+    Min 0: (stage_23.0.min + -2)
+    Max 0: (stage_23.0.max + 2)
+    Min 1: (stage_23.1.min + -2)
+    Max 1: (stage_23.1.max + 2)
+Edge: stage_21 -> stage_22
+  Footprint: 
+    Min 0: (stage_22.0.min + -2)
+    Max 0: (stage_22.0.max + 2)
+    Min 1: (stage_22.1.min + -2)
+    Max 1: (stage_22.1.max + 2)
+Edge: stage_20 -> stage_21
+  Footprint: 
+    Min 0: (stage_21.0.min + -2)
+    Max 0: (stage_21.0.max + 2)
+    Min 1: (stage_21.1.min + -2)
+    Max 1: (stage_21.1.max + 2)
+Edge: stage_19 -> stage_20
+  Footprint: 
+    Min 0: (stage_20.0.min + -2)
+    Max 0: (stage_20.0.max + 2)
+    Min 1: (stage_20.1.min + -2)
+    Max 1: (stage_20.1.max + 2)
+Edge: stage_18 -> stage_19
+  Footprint: 
+    Min 0: (stage_19.0.min + -2)
+    Max 0: (stage_19.0.max + 2)
+    Min 1: (stage_19.1.min + -2)
+    Max 1: (stage_19.1.max + 2)
+Edge: stage_17 -> stage_18
+  Footprint: 
+    Min 0: (stage_18.0.min + -2)
+    Max 0: (stage_18.0.max + 2)
+    Min 1: (stage_18.1.min + -2)
+    Max 1: (stage_18.1.max + 2)
+Edge: stage_16 -> stage_17
+  Footprint: 
+    Min 0: (stage_17.0.min + -2)
+    Max 0: (stage_17.0.max + 2)
+    Min 1: (stage_17.1.min + -2)
+    Max 1: (stage_17.1.max + 2)
+Edge: stage_15 -> stage_16
+  Footprint: 
+    Min 0: (stage_16.0.min + -2)
+    Max 0: (stage_16.0.max + 2)
+    Min 1: (stage_16.1.min + -2)
+    Max 1: (stage_16.1.max + 2)
+Edge: stage_14 -> stage_15
+  Footprint: 
+    Min 0: (stage_15.0.min + -2)
+    Max 0: (stage_15.0.max + 2)
+    Min 1: (stage_15.1.min + -2)
+    Max 1: (stage_15.1.max + 2)
+Edge: stage_13 -> stage_14
+  Footprint: 
+    Min 0: (stage_14.0.min + -2)
+    Max 0: (stage_14.0.max + 2)
+    Min 1: (stage_14.1.min + -2)
+    Max 1: (stage_14.1.max + 2)
+Edge: stage_12 -> stage_13
+  Footprint: 
+    Min 0: (stage_13.0.min + -2)
+    Max 0: (stage_13.0.max + 2)
+    Min 1: (stage_13.1.min + -2)
+    Max 1: (stage_13.1.max + 2)
+Edge: stage_11 -> stage_12
+  Footprint: 
+    Min 0: (stage_12.0.min + -2)
+    Max 0: (stage_12.0.max + 2)
+    Min 1: (stage_12.1.min + -2)
+    Max 1: (stage_12.1.max + 2)
+Edge: stage_10 -> stage_11
+  Footprint: 
+    Min 0: (stage_11.0.min + -2)
+    Max 0: (stage_11.0.max + 2)
+    Min 1: (stage_11.1.min + -2)
+    Max 1: (stage_11.1.max + 2)
+Edge: stage_9 -> stage_10
+  Footprint: 
+    Min 0: (stage_10.0.min + -2)
+    Max 0: (stage_10.0.max + 2)
+    Min 1: (stage_10.1.min + -2)
+    Max 1: (stage_10.1.max + 2)
+Edge: stage_8 -> stage_9
+  Footprint: 
+    Min 0: (stage_9.0.min + -2)
+    Max 0: (stage_9.0.max + 2)
+    Min 1: (stage_9.1.min + -2)
+    Max 1: (stage_9.1.max + 2)
+Edge: stage_7 -> stage_8
+  Footprint: 
+    Min 0: (stage_8.0.min + -2)
+    Max 0: (stage_8.0.max + 2)
+    Min 1: (stage_8.1.min + -2)
+    Max 1: (stage_8.1.max + 2)
+Edge: stage_6 -> stage_7
+  Footprint: 
+    Min 0: (stage_7.0.min + -2)
+    Max 0: (stage_7.0.max + 2)
+    Min 1: (stage_7.1.min + -2)
+    Max 1: (stage_7.1.max + 2)
+Edge: stage_5 -> stage_6
+  Footprint: 
+    Min 0: (stage_6.0.min + -2)
+    Max 0: (stage_6.0.max + 2)
+    Min 1: (stage_6.1.min + -2)
+    Max 1: (stage_6.1.max + 2)
+Edge: stage_4 -> stage_5
+  Footprint: 
+    Min 0: (stage_5.0.min + -2)
+    Max 0: (stage_5.0.max + 2)
+    Min 1: (stage_5.1.min + -2)
+    Max 1: (stage_5.1.max + 2)
+Edge: stage_3 -> stage_4
+  Footprint: 
+    Min 0: (stage_4.0.min + -2)
+    Max 0: (stage_4.0.max + 2)
+    Min 1: (stage_4.1.min + -2)
+    Max 1: (stage_4.1.max + 2)
+Edge: stage_2 -> stage_3
+  Footprint: 
+    Min 0: (stage_3.0.min + -2)
+    Max 0: (stage_3.0.max + 2)
+    Min 1: (stage_3.1.min + -2)
+    Max 1: (stage_3.1.max + 2)
+Edge: stage_1 -> stage_2
+  Footprint: 
+    Min 0: (stage_2.0.min + -2)
+    Max 0: (stage_2.0.max + 2)
+    Min 1: (stage_2.1.min + -2)
+    Max 1: (stage_2.1.max + 2)
+Edge: stage_0 -> stage_1
+  Footprint: 
+    Min 0: (stage_1.0.min + -2)
+    Max 0: (stage_1.0.max + 2)
+    Min 1: (stage_1.1.min + -2)
+    Max 1: (stage_1.1.max + 2)
+Edge: repeat_edge -> stage_0
+  Footprint: 
+    Min 0: (stage_0.0.min + -2)
+    Max 0: (stage_0.0.max + 2)
+    Min 1: (stage_0.1.min + -2)
+    Max 1: (stage_0.1.max + 2)
+Edge: lambda_0 -> repeat_edge
+  Footprint: 
+    Min 0: max(min(repeat_edge.0.min, 1535), 0)
+    Max 0: max(min(repeat_edge.0.max, 1535), 0)
+    Min 1: max(min(repeat_edge.1.min, 2559), 0)
+    Max 1: max(min(repeat_edge.1.max, 2559), 0)
+Edge: input_im -> lambda_0
+  Footprint: 
+    Min 0: lambda_0.0.min
+    Max 0: lambda_0.0.max
+    Min 1: lambda_0.1.min
+    Max 1: lambda_0.1.max
+[.................................-                                            ][.............................................................\                ]
+** Optimal schedule:
+State with cost 5234038052.159103:
+
+realize: output
+realize: stage_15
+realize: stage_3
+realize: stage_25
+stage_3 8 8 t
+ realize: stage_0
+ realize: stage_2
+ realize: stage_1
+ stage_0 1 2 t
+  realize: lambda_0
+  realize: repeat_edge
+  stage_0 1 173
+   lambda_0 158 1 t *
+    inlined: input_im 1
+   repeat_edge 222 5 t *
+   stage_0 218 1 t *
+ stage_1 214 342 t *
+ stage_2 210 338 t *
+ stage_3 206 334 t *
+stage_15 4 4 t
+ realize: stage_7
+ realize: stage_8
+ realize: stage_4
+ realize: stage_5
+ realize: stage_6
+ realize: stage_11
+ realize: stage_10
+ realize: stage_9
+ realize: stage_12
+ stage_15 1 8
+  realize: stage_14
+  realize: stage_13
+  stage_4 444 126 t *
+  stage_5 440 122 t *
+  stage_6 436 118 t *
+  stage_7 432 114 t *
+  stage_8 428 110 t *
+  stage_9 424 106 t *
+  stage_10 420 102 t *
+  stage_11 416 98 t *
+  stage_12 412 94 t *
+  stage_13 408 90 t *
+  stage_14 404 86 t *
+  stage_15 400 82 t *
+stage_25 2 8 t
+ realize: stage_17
+ realize: stage_18
+ realize: stage_19
+ realize: stage_20
+ realize: stage_21
+ realize: stage_23
+ realize: stage_16
+ realize: stage_24
+ stage_21 1 339 t
+  stage_16 816 21 t *
+  stage_17 812 17 t *
+  stage_18 808 13 t *
+  stage_19 804 9 t *
+  stage_20 800 5 t *
+  stage_21 796 1 t *
+ stage_23 2 2 t
+  realize: stage_22
+  stage_22 398 170 t *
+  stage_23 394 166 t *
+ stage_24 784 327 t *
+ stage_25 780 323 t *
+output 1 16 t
+ realize: stage_26
+ realize: stage_27
+ realize: stage_28
+ realize: stage_29
+ realize: stage_30
+ output 1 160
+  stage_26 1556 21 t *
+  stage_27 1552 17 t *
+  stage_28 1548 13 t *
+  stage_29 1544 9 t *
+  stage_30 1540 5 t *
+  output 1536 1 t *
+   inlined: stage_31 1
+Folding discount for stage_26: 0.116667
+Folding discount for stage_27: 0.096591
+Folding discount for stage_28: 0.075581
+Folding discount for stage_29: 0.053571
+Folding discount for stage_30: 0.030488
+Folding discount for stage_17: 0.047887
+Folding discount for stage_18: 0.037037
+Folding discount for stage_19: 0.025937
+Folding discount for stage_20: 0.014577
+Folding discount for stage_16: 0.058496
+Folding discount for stage_7: 0.165698
+Folding discount for stage_8: 0.160819
+Folding discount for stage_4: 0.180000
+Folding discount for stage_5: 0.175287
+Folding discount for stage_6: 0.170520
+Folding discount for stage_11: 0.145833
+Folding discount for stage_10: 0.150888
+Folding discount for stage_9: 0.155882
+Folding discount for stage_12: 0.140719
+Folding discount for lambda_0: 0.008850
+Folding discount for repeat_edge: 0.028249
+Func input_im is inlined
+Func input_im has costs: 21258240.000000 = 21258240.000000 + 0.000000
+Func lambda_0 has costs: 23142400.000000 = 23142400.000000 + 0.000000
+Func repeat_edge has costs: 92142441.115634 = 91348992.000000 + 793449.115634
+Func stage_0 has costs: 1760559150.309691 = 1755930624.000000 + 4628526.309691
+Func stage_1 has costs: 1772251316.781251 = 1735630848.000000 + 36620468.781251
+Func stage_2 has costs: 1750332424.785494 = 1715331072.000000 + 35001352.785494
+Func stage_3 has costs: 1607387064.446947 = 1573957632.000000 + 33429432.446947
+Func stage_4 has costs: 2031462638.003926 = 1776230400.000000 + 255232238.003926
+Func stage_5 has costs: 1798568497.844770 = 1766080512.000000 + 32487985.844770
+Func stage_6 has costs: 1787287528.923796 = 1755930624.000000 + 31356904.923796
+Func stage_7 has costs: 1713675606.604388 = 1683431424.000000 + 30244182.604389
+Func stage_8 has costs: 1702793558.439076 = 1673644032.000000 + 29149526.439076
+Func stage_9 has costs: 1691929271.012892 = 1663856640.000000 + 28072631.012892
+Func stage_10 has costs: 1681082424.097601 = 1654069248.000000 + 27013176.097601
+Func stage_11 has costs: 1609353352.468045 = 1583382528.000000 + 25970824.468045
+Func stage_12 has costs: 1598902851.303618 = 1573957632.000000 + 24945219.303618
+Func stage_13 has costs: 1720417261.076538 = 1696481280.000000 + 23935981.076538
+Func stage_14 has costs: 1645959742.626730 = 1621082112.000000 + 24877630.626730
+Func stage_15 has costs: 1509130396.856434 = 1486233600.000000 + 22896796.856434
+Func stage_16 has costs: 1896848122.024726 = 1659234816.000000 + 237613306.024726
+Func stage_17 has costs: 1657694969.699610 = 1640747520.000000 + 16947449.699610
+Func stage_18 has costs: 1637227813.961511 = 1622260224.000000 + 14967589.961511
+Func stage_19 has costs: 1616618719.044202 = 1603772928.000000 + 12845791.044202
+Func stage_20 has costs: 1564689772.512574 = 1554201600.000000 + 10488172.512574
+Func stage_21 has costs: 1543746513.162824 = 1536076800.000000 + 7669713.162824
+Func stage_22 has costs: 1602556981.195535 = 1540608000.000000 + 61948981.195535
+Func stage_23 has costs: 1530938846.889469 = 1499827200.000000 + 31111646.889469
+Func stage_24 has costs: 1510938663.854187 = 1452068352.000000 + 58870311.854187
+Func stage_25 has costs: 1491672863.523729 = 1434306048.000000 + 57366815.523729
+Func stage_26 has costs: 1822155313.478275 = 1598607360.000000 + 223547953.478275
+Func stage_27 has costs: 1569507851.594171 = 1547132928.000000 + 22374923.594171
+Func stage_28 has costs: 1531579106.092020 = 1511970816.000000 + 19608290.092020
+Func stage_29 has costs: 1493501211.386915 = 1476808704.000000 + 16692507.386915
+Func stage_30 has costs: 1455160050.117417 = 1441646592.000000 + 13513458.117418
+Func stage_31 is inlined
+Func stage_31 has costs: 1376256000.000000 = 1376256000.000000 + 0.000000
+Func output has costs: 49115934.925098 = 39321600.000000 + 9794334.925098
+XXXN 39321600.000000
+XXXI 1376256000.000000
+XXXN 1441646592.000000
+XXXN 1476808704.000000
+XXXN 1511970816.000000
+XXXN 1547132928.000000
+XXXN 1598607360.000000
+XXXN 1434306048.000000
+XXXN 1452068352.000000
+XXXN 1499827200.000000
+XXXN 1540608000.000000
+XXXN 1536076800.000000
+XXXN 1554201600.000000
+XXXN 1603772928.000000
+XXXN 1622260224.000000
+XXXN 1640747520.000000
+XXXN 1659234816.000000
+XXXN 1486233600.000000
+XXXN 1621082112.000000
+XXXN 1696481280.000000
+XXXN 1573957632.000000
+XXXN 1583382528.000000
+XXXN 1654069248.000000
+XXXN 1663856640.000000
+XXXN 1673644032.000000
+XXXN 1683431424.000000
+XXXN 1755930624.000000
+XXXN 1766080512.000000
+XXXN 1776230400.000000
+XXXN 1573957632.000000
+XXXN 1715331072.000000
+XXXN 1735630848.000000
+XXXN 1755930624.000000
+XXXN 91348992.000000
+XXXN 23142400.000000
+XXXI 21258240.000000
+XXXE 9794334.925098
+XXXE 9794334.925098
+XXXE 13513458.117418
+XXXE 16692507.386915
+XXXE 19608290.092020
+XXXE 22374923.594171
+XXXE 223547953.478275
+XXXE 57366815.523729
+XXXE 58870311.854187
+XXXE 31111646.889469
+XXXE 61948981.195535
+XXXE 7669713.162824
+XXXE 10488172.512574
+XXXE 12845791.044202
+XXXE 14967589.961511
+XXXE 16947449.699610
+XXXE 237613306.024726
+XXXE 22896796.856434
+XXXE 24877630.626730
+XXXE 23935981.076538
+XXXE 24945219.303618
+XXXE 25970824.468045
+XXXE 27013176.097601
+XXXE 28072631.012892
+XXXE 29149526.439076
+XXXE 30244182.604389
+XXXE 31356904.923796
+XXXE 32487985.844770
+XXXE 255232238.003926
+XXXE 33429432.446947
+XXXE 35001352.785494
+XXXE 36620468.781251
+XXXE 4628526.309691
+XXXE 793449.115634
+XXXE 0.000000
