@@ -414,11 +414,21 @@ Stmt inject_tracing(Stmt s, const string &pipeline_name,
             strings.push_back(Expr((int) box.bounds.size()));
             for (const Interval &i : box.bounds) {
                 internal_assert(i.min.defined() && i.max.defined());
-                strings.push_back(space);
-                strings.push_back(i.min);
-                strings.push_back(space);
-                // Emit as (min, extent) rather than (min, max)
-                strings.push_back(i.max - i.min + 1);
+                if (i.is_bounded()) {
+                    strings.push_back(space);
+                    strings.push_back(i.min);
+                    strings.push_back(space);
+                    // Emit as (min, extent) rather than (min, max)
+                    strings.push_back(i.max - i.min + Expr(1));
+                } else {
+                    // This should really only happen for unusual cases
+                    // that we won't end up realizing, so we can just
+                    // use any numeric values.
+                    strings.push_back(space);
+                    strings.push_back(Expr(0));
+                    strings.push_back(space);
+                    strings.push_back(Expr(0));
+                }
             }
             builder.trace_tag_expr = Internal::Call::make(type_of<const char *>(),
                 Internal::Call::stringify, strings, Internal::Call::Intrinsic);
