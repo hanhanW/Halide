@@ -72,3 +72,18 @@ clean:
 
 
 test: all
+
+
+../../bin/HalideTraceViz: ../../util/HalideTraceViz.cpp
+	$(MAKE) -C ../../ bin/HalideTraceViz
+
+$(BIN)/viz_auto.mp4: $(BIN)/resize ../support/viz_auto.sh ../../bin/HalideTraceViz
+	@mkdir -p $(@D)
+	bash ../support/viz_auto.sh "$(BIN)/resize $(IMAGES)/rgb_small.png \
+	/tmp/foo.png \
+	-i box \
+	-t uint8 \
+	-f 0.5" ../../bin/HalideTraceViz $@
+
+viz_auto: $(BIN)/viz_auto.mp4
+	mplayer $^

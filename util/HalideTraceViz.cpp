@@ -20,6 +20,7 @@ typedef int64_t ssize_t;
 #include <string>
 #include <list>
 #include <set>
+#include <cmath>
 
 #include "inconsolata.h"
 #include "HalideRuntime.h"
@@ -45,10 +46,14 @@ using std::set;
 // A struct specifying how a single Func will get visualized.
 struct FuncInfo {
 
-    bool configured = false;
+    // Info about Funcs type and touched-extent, emitted
+    // by the tracing code.
+    FuncTypeAndDim type_and_dim;
+    bool type_and_dim_valid = false;
 
     // Configuration for how the func should be drawn
     FuncConfig config;
+    bool config_valid = false;
 
     // Information about actual observed values gathered while parsing the trace
     struct Observed {
@@ -313,18 +318,42 @@ void fill_realization(uint32_t *image, const Point &image_size, uint32_t color,
             }
         }
     } else {
-        int min = p.get_coord(current_dimension * 2 + 0);
-        int extent = p.get_coord(current_dimension * 2 + 1);
+        const int min = p.get_coord(current_dimension * 2 + 0);
+        const int extent = p.get_coord(current_dimension * 2 + 1);
         // If we don't have enough strides, assume subsequent dimensions have stride (0, 0)
-        const Point pt = current_dimension < fi.config.strides.size() ? fi.config.strides[current_dimension] : Point{0, 0};
+        const Point pt = current_dimension < fi.config.strides.size() ? fi.config.strides.at(current_dimension) : Point{0, 0};
         x_off += pt.x * min;
         y_off += pt.y * min;
-        for (int i = min; i < min + extent; i++) {
-            fill_realization(image, image_size, color, fi, p,
-                current_dimension + 1, x_off, y_off);
+        for (int i = 0; i < extent; i++) {
+            fill_realization(image, image_size, color, fi, p, current_dimension + 1, x_off, y_off);
             x_off += pt.x;
             y_off += pt.y;
         }
+    }
+}
+
+// Calculate the maximum 2d rendered size for a given Box and stride, assuming
+// a zoom factor of 1. This uses the same recursive approach as fill_realization()
+// for simplicity.
+void calc_2d_size(const std::vector<Range> &dims, const std::vector<Point> &strides, Point *size,
+                      int current_dimension = 0, int x_off = 0, int y_off = 0) {
+    if (current_dimension == dims.size()) {
+        size->x = std::max(size->x, x_off);
+        size->y = std::max(size->y, y_off);
+    } else {
+        const auto &m = dims.at(current_dimension);
+        const Point &stride = strides.at(current_dimension);
+        x_off += stride.x * m.min;
+        y_off += stride.y * m.min;
+        for (int i = 0; i < m.extent; i++) {
+            calc_2d_size(dims, strides, size, current_dimension + 1, x_off, y_off);
+            x_off += stride.x;
+            y_off += stride.y;
+        }
+    }
+    if (current_dimension == 0) {
+        if (size->x < 1) size->x = 1;
+        if (size->y < 1) size->y = 1;
     }
 }
 
@@ -380,24 +409,147 @@ void do_decay(int decay_factor, std::vector<uint32_t> &storage) {
 
 // Given a FuncConfig, check each field for "use some reasonable default"
 // value and fill in something reasonable.
-FuncConfig fix_func_config_defaults(const FuncConfig &cfg) {
-    // Make a FuncConfig with 'safe' defaults for everything,
-    // then merge the existing cfg into it.
-    FuncConfig safe;
-    safe.zoom = 1.f;
-    safe.load_cost = 0;
-    safe.store_cost = 1;
-    safe.pos = {0, 0};
-    safe.strides = { {1, 0}, {0, 1} };
-    safe.color_dim = -1;
-    safe.min = 0.0;
-    safe.max = 1.0;
-    safe.labels = {};
-    safe.blank_on_end_realization = 0;
-    safe.uninitialized_memory_color = 0x00000000;
-    safe.merge_from(cfg);
-    safe,uninitialized_memory_color |= 0xff000000;
-    return safe;
+void finalize_func_config_values(map<string, FuncInfo> &func_info) {
+    for (auto &p : func_info) {
+        const string &func_name = p.first;
+        auto &fi = p.second;
+
+        // Make a FuncConfig with 'safe' defaults for everything,
+        // then merge the existing cfg into it.
+        FuncConfig safe;
+        safe.zoom = 1.f;
+        safe.load_cost = 0;
+        safe.store_cost = 1;
+        safe.pos = {0, 0};
+        safe.strides = { {1, 0}, {0, 1} };
+        safe.color_dim = -1;
+        safe.min = 0.0;
+        safe.max = 1.0;
+        safe.labels = {};
+        safe.blank_on_end_realization = 0;
+        safe.uninitialized_memory_color = 0x00000000;
+
+        if (fi.type_and_dim_valid) {
+            // Try to choose better values for min and max based on type.
+            // TODO: only considers the first type given; in general,
+            // HTV doesn't deal with Tuple-valued Funcs very well.
+            const halide_type_t &type = fi.type_and_dim.types.at(0);
+            if (type.code == halide_type_uint) {
+                safe.max = (double) ((1 << type.bits) - 1);
+            } else if (type.code == halide_type_int) {
+                double d = (double) (1 << (type.bits - 1));
+                safe.max = d - 1;
+                // safe.min = -d;
+                // In practice, assuming a min of zero (rather then -INT_MIN)
+                // for signed types produces less-weird results.
+                safe.min = 0.0;
+            }
+        }
+
+        safe.merge_from(fi.config);
+        fi.config = safe;
+    }
+}
+
+void do_auto_layout(const GlobalConfig &global, map<string, FuncInfo> &func_info) {
+    const Point &pad = global.auto_layout_pad;
+    Point cell_size = {
+        global.frame_size.x / global.auto_layout_grid.x,
+        global.frame_size.y / global.auto_layout_grid.y
+    };
+    int row = 0, col = 0;
+    for (auto &p : func_info) {
+        const string &func_name = p.first;
+        auto &fi = p.second;
+        if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
+            // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
+            if (fi.type_and_dim.dims.size() == 3 && (fi.type_and_dim.dims[2].extent == 3 || fi.type_and_dim.dims[2].extent == 4)) {
+                fi.config.color_dim = 2;
+            }
+        }
+
+        if (fi.config.zoom < 0.f && fi.type_and_dim_valid) {
+            // Ensure that all of the FuncInfos have strides that match
+            // the number of dimensions expected by FuncTypeAndDim, adding
+            // zero-stride pairs as needed (this simplifies rendering checks
+            // later on)
+            if (fi.config.strides.empty()) {
+                fi.config.strides = { {1, 0}, {0, 1} };
+            }
+            while (fi.config.strides.size() < fi.type_and_dim.dims.size()) {
+                fi.config.strides.push_back({0, 0});
+            }
+
+            // Calc the 2d size that this would render at (including stride-stretching) for zoom=1
+            Point size;
+            calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &size);
+            std::cerr << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
+
+            // Use that size to calculate the zoom we need -- this chooses
+            // a zoom that maximizes the size within the cell.
+            float zoom_x = (float) (cell_size.x - pad.x) / (float) size.x;
+            float zoom_y = (float) (cell_size.y - pad.y) / (float) size.y;
+            fi.config.zoom = std::min(zoom_x, zoom_y);
+
+            // Try to choose an even-multiple zoom for better display
+            // and just less weirdness.
+            if (fi.config.zoom > 100.f) {
+                // Zooms this large are usually for things like input matrices.
+                // Perhaps clamp at something smaller?
+                fi.config.zoom = floor(fi.config.zoom / 100.f) * 100.f;
+            } else if (fi.config.zoom > 10.f) {
+                fi.config.zoom = floor(fi.config.zoom / 10.f) * 10.f;
+            } else if (fi.config.zoom > 1.f) {
+                fi.config.zoom = floor(fi.config.zoom * 2.f) / 2.f;
+            } else if (fi.config.zoom < 1.f) {
+                fi.config.zoom = ceil(fi.config.zoom * 20.f) / 20.f;
+            }
+        }
+
+        // Put the image at the top-left of the cell. (Should we try to
+        // center within the cell?)
+        if (fi.config.pos.x < 0 && fi.config.pos.y < 0) {
+            fi.config.pos.x = col * cell_size.x + pad.x;
+            fi.config.pos.y = row * cell_size.y + pad.y;
+        }
+
+        if (fi.config.labels.empty()) {
+            string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
+            fi.config.labels.push_back({label, {0, 0}, 10});
+        }
+
+        fi.config_valid = true;
+
+        // advance to next cell
+        col++;
+        if (col >= global.auto_layout_grid.x) {
+            col = 0;
+            row++;
+        }
+    }
+}
+
+float calc_side_length(int min_cells, int width, int height) {
+    const float aspect_ratio = (float) width / (float) height;
+    const float p = ceil(sqrt(min_cells * aspect_ratio));
+    const float par = p / aspect_ratio;
+    const float s = floor(par) * p < min_cells ?
+                height / ceil(par) :
+                width / p;
+    return s;
+}
+
+// Calculate the 'best' cell size such that we can fit at least min_cells
+// into the given width x height. Currently this calculates perfectly
+// square cells, which is OK but a little wasteful (eg for min_cells=20
+// and size 1920x1080, it calculates a grid of 7x4 which wastes 8 cells).
+// We could probably do better if we just tried to keep the cells 'nearly'
+// square (aspect ratio <= 1.25).
+Point best_cell_size(int min_cells, int width, int height) {
+    const float sx = calc_side_length(min_cells, width, height);
+    const float sy = calc_side_length(min_cells, height, width);
+    const int edge = floor(std::max(sx, sy));
+    return {edge, edge};
 }
 
 void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncInfo> &func_info) {
@@ -419,7 +571,7 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             const char *func = argv[++i];
             FuncInfo &fi = func_info[func];
             fi.config.merge_from(config);
-            fi.configured = true;
+            fi.config_valid = true;
         } else if (next == "--min") {
             expect(i + 1 < argc, i);
             config.min = parse_double(argv[++i]);
@@ -530,6 +682,16 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             int g = parse_int(argv[++i]);
             int b = parse_int(argv[++i]);
             config.uninitialized_memory_color = ((b & 255) << 16) | ((g & 255) << 8) | (r & 255);
+        } else if (next == "--auto_layout") {
+            global.auto_layout = true;
+        } else if (next == "--no-auto_layout") {
+            global.auto_layout = false;
+        } else if (next == "--auto_layout_grid") {
+            expect(i + 2 < argc, i);
+            global.auto_layout_grid.x = parse_int(argv[++i]);
+            global.auto_layout_grid.y = parse_int(argv[++i]);
+        } else if (next == "--ignore_tags" || next == "--no-ignore_tags") {
+            // Already processed, just continue
         } else {
             expect(false, i);
         }
@@ -541,6 +703,15 @@ int run(int argc, char **argv) {
     if (argc == 1) {
         usage();
         return 0;
+    }
+
+    bool ignore_trace_tags = false;
+    for (int i = 1; i < argc; ++i) {
+        if (!strcmp(argv[i], "--ignore_tags")) {
+            ignore_trace_tags = true;
+        } else if (!strcmp(argv[i], "--no-ignore_tags")) {
+            ignore_trace_tags = false;
+        }
     }
 
     // State that determines how different funcs get drawn
@@ -593,6 +764,7 @@ int run(int argc, char **argv) {
 
         if (halide_clock > video_clock) {
             assert(all_args_final);
+
             const ssize_t frame_bytes = buffers.image.size() * sizeof(uint32_t);
 
             while (halide_clock > video_clock) {
@@ -652,51 +824,80 @@ int run(int argc, char **argv) {
             // halide_trace_begin_pipeline but before any realizations.
             if (halide_clock != 0 || video_clock != 0) {
                 // Messing with timestamp, framesize, etc partway thru
-                // a visualization would be bad.
+                // a visualization would be bad, but let's just warn
+                // rather than fail.
                 // TODO: May need to check parent_id here, as nested
                 // pipelines called via define_extern could emit these.
-                std::cerr << "trace_tags are only expected at the start of a visualization.\n";
-                exit(1);
+                std::cerr << "Warning: trace_tags are only expected at the start of a visualization:"
+                    << " (" << p.trace_tag() << ") for func (" << p.func() << ")\n";
             }
             if (FuncConfig::match(p.trace_tag())) {
+                if (ignore_trace_tags) {
+                    continue;
+                }
                 FuncConfig cfg(p.trace_tag());
                 func_info[p.func()].config = cfg;
-                func_info[p.func()].configured = true;
+                func_info[p.func()].config_valid = true;
             } else if (GlobalConfig::match(p.trace_tag())) {
+                if (ignore_trace_tags) {
+                    continue;
+                }
                 if (seen_global_config_tag) {
                     std::cerr << "Warning, saw multiple GlobalConfig trace_tags, some will be ignored.\n";
                 }
                 global = GlobalConfig(p.trace_tag());
                 seen_global_config_tag = true;
+            } else if (FuncTypeAndDim::match(p.trace_tag())) {
+                func_info[p.func()].type_and_dim = FuncTypeAndDim(p.trace_tag());
+                func_info[p.func()].type_and_dim_valid = true;
             } else {
-                std::cerr << "Ignoring trace_tag: (" << p.trace_tag() << ")\n";
+                std::cerr << "Ignoring trace_tag: (" << p.trace_tag() << ") for func (" << p.func() << ")\n";
             }
             continue;
         }
 
         if (!all_args_final) {
+            all_args_final = true;
+
             // We wait until now to process the cmd-line args;
             // this allows us to override trace-tag specifications
             // via the commandline, which is handy for experimentations.
             process_args(argc, argv, global, func_info);
 
-            // Ensure that all FuncConfigs have reasonable values.
-            for (auto &p : func_info) {
-                p.second.config = fix_func_config_defaults(p.second.config);
-            }
-
             // allocate the buffers after all tags and flags are processed
             buffers.resize(global.frame_size);
+
+            if (global.auto_layout_grid.x < 0 || global.auto_layout_grid.y < 0) {
+                int cells_needed = 0;
+                for (const auto &p : func_info) {
+                    if (p.second.type_and_dim_valid) cells_needed++;
+                }
+                Point cell_size = best_cell_size(cells_needed, global.frame_size.x, global.frame_size.y);
+                global.auto_layout_grid.x = global.frame_size.x / cell_size.x;
+                global.auto_layout_grid.y = global.frame_size.y / cell_size.y;
+                assert(global.auto_layout_grid.x * global.auto_layout_grid.y >= cells_needed);
+                std::cerr << "For cells_needed = " << cells_needed
+                    << " using " << global.auto_layout_grid.x << "x" << global.auto_layout_grid.y << " grid"
+                    << " with cells of size " << cell_size.x << "x" << cell_size.y << "\n";
+            }
+            if (global.auto_layout) {
+                do_auto_layout(global, func_info);
+            }
+
+            // Ensure that all FuncConfigs have reasonable values.
+            finalize_func_config_values(func_info);
 
             // dump after any tags are handled
             global.dump(std::cerr);
             for (const auto &p : func_info) {
                 const auto &fi = p.second;
-                if (fi.configured) {
+                if (fi.type_and_dim_valid) {
+                    fi.type_and_dim.dump(std::cerr, p.first);
+                }
+                if (fi.config_valid) {
                     fi.config.dump(std::cerr, p.first);
                 }
             }
-            all_args_final = true;
         }
 
         PipelineInfo pipeline = pipeline_info[p.parent_id];
@@ -727,7 +928,7 @@ int run(int argc, char **argv) {
 
         // Draw the event
         FuncInfo &fi = func_info[qualified_name];
-        if (!fi.configured) continue;
+        if (!fi.config_valid) continue;
 
         if (fi.stats.first_draw_time < 0) {
             fi.stats.first_draw_time = halide_clock;
@@ -855,7 +1056,7 @@ int run(int argc, char **argv) {
         }
         case halide_trace_begin_realization:
             fi.stats.num_realizations++;
-            fill_realization(buffers.image.data(), global.frame_size, fi.config.uninitialized_memory_color, fi, p);
+            fill_realization(buffers.image.data(), global.frame_size, 0xff000000 | fi.config.uninitialized_memory_color, fi, p);
             break;
         case halide_trace_end_realization:
             if (fi.config.blank_on_end_realization > 0) {

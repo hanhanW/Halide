@@ -2,6 +2,7 @@
 #include "IRMutator.h"
 #include "IROperator.h"
 #include "runtime/HalideRuntime.h"
+#include "Bounds.h"
 
 namespace Halide {
 namespace Internal {
@@ -13,7 +14,8 @@ using std::pair;
 using std::set;
 
 struct TraceEventBuilder {
-    string func, trace_tag;
+    string func;
+    Expr trace_tag_expr = Expr("");
     vector<Expr> value;
     vector<Expr> coordinates;
     Type type;
@@ -35,7 +37,7 @@ struct TraceEventBuilder {
                              (int)type.code(), (int)type.bits(), (int)type.lanes(),
                              (int)event,
                              parent_id, idx, (int)coordinates.size(),
-                             Expr(trace_tag)};
+                             trace_tag_expr};
         return Call::make(Int(32), Call::trace, args, Call::Extern);
     }
 };
@@ -47,6 +49,9 @@ public:
     // We want to preserve the order, so use a vector<pair> rather than a map
     vector<pair<string, vector<string>>> trace_tags;
     set<string> trace_tags_added;
+    // The funcs that will have any tracing info emitted (not just trace tags),
+    // in the order we see them.
+    vector<pair<string, vector<Type>>> funcs_touched;
 
     InjectTracing(const map<string, Function> &e, const Target &t)
         : env(e),
@@ -62,6 +67,28 @@ private:
         if (!t.empty() && !trace_tags_added.count(name)) {
             trace_tags.push_back({name, t});
             trace_tags_added.insert(name);
+        }
+    }
+
+    void add_func_touched(const string &name, int value_index, const Type &type) {
+        // List is usually small, so linear search is fine
+        auto it = std::find_if(funcs_touched.begin(), funcs_touched.end(),
+                               [name](const pair<string, vector<Type>> &p) -> bool { return p.first == name; });
+        if (it == funcs_touched.end()) {
+            vector<Type> types(value_index+1);
+            types[value_index] = type;
+            funcs_touched.push_back({name, std::move(types)});
+        } else {
+            // If the type already present is missing, or "handle0" (aka "we don't know yet",
+            // replace it with the given type. Otherwise, assert the types match.
+            vector<Type> &types = it->second;
+            if ((int) types.size() <= value_index) {
+                types.resize(value_index+1);
+                types[value_index] = type;
+            } else {
+                internal_assert(type == Type() || type == types[value_index]) <<
+                    "Type was already specified as " << types[value_index] << " but now is " << type;
+            }
         }
     }
 
@@ -107,6 +134,8 @@ private:
         }
 
         if (trace_it) {
+            add_func_touched(op->name, op->value_index, op->type);
+
             string value_var_name = unique_name('t');
             Expr value_var = Variable::make(op->type, value_var_name);
 
@@ -138,6 +167,7 @@ private:
         internal_assert(!f.can_be_inlined() || !f.schedule().compute_level().is_inlined());
 
         if (f.is_tracing_stores() || trace_all_stores) {
+
             // Wrap each expr in a tracing call
 
             const vector<Expr> &values = op->values;
@@ -150,6 +180,7 @@ private:
             builder.parent_id = Variable::make(Int(32), op->name + ".trace_id");
             for (size_t i = 0; i < values.size(); i++) {
                 Type t = values[i].type();
+                add_func_touched(f.name(), (int) i, t);
                 string value_var_name = unique_name('t');
                 Expr value_var = Variable::make(t, value_var_name);
 
@@ -194,6 +225,9 @@ private:
         Function f = iter->second;
         if (f.is_tracing_realizations() || trace_all_realizations) {
             add_trace_tags(op->name, f.get_trace_tags());
+            for (size_t i = 0; i < op->types.size(); i++) {
+                add_func_touched(op->name, i, op->types[i]);
+            }
 
             // Throw a tracing call before and after the realize body
             TraceEventBuilder builder;
@@ -338,9 +372,57 @@ Stmt inject_tracing(Stmt s, const string &pipeline_name,
             for (auto it = trace_tags.second.rbegin(); it != trace_tags.second.rend(); ++it) {
                 user_assert(it->find('\0') == string::npos)
                     << "add_trace_tag() may not contain the null character.";
-                builder.trace_tag = *it;
+                builder.trace_tag_expr = Expr(*it);
                 s = Block::make(Evaluate::make(builder.build()), s);
             }
+        }
+
+        builder.event = halide_trace_tag;
+
+        // Compute boxes_touched and send a func_type_and_dim trace-tag for
+        // everything that we actually touched, in the order we encountered them.
+        // We include the type(s) of each Func (could be multiple for Tuple-valued
+        // Funcs), and the dimensions and guess-at-ranges-rouched. Note that the
+        // dimensions should be exact, but the ranges-touched is a conservative estimate;
+        // that's ok, as we just want to send these as rough guesses for a tracing tool to use for
+        // automatic layout. (Note that we deliberately send these
+        // before any user-specified trace-tags.)
+        Expr space = Expr(" ");
+
+        std::map<std::string, Box> bt = boxes_touched(s);
+        for (const auto &p : tracing.funcs_touched) {
+            const string &func_name = p.first;
+            const vector<Type> &func_types = p.second;
+            builder.func = func_name;
+
+            vector<Expr> strings;
+            strings.push_back(Expr("func_type_and_dim:"));
+            strings.push_back(space);
+            strings.push_back((int) func_types.size());
+            for (const auto &func_type : func_types) {
+                strings.push_back(space);
+                strings.push_back(func_type.code());
+                strings.push_back(space);
+                strings.push_back(func_type.bits());
+                strings.push_back(space);
+                strings.push_back(func_type.lanes());
+            }
+            auto it = bt.find(func_name);
+            internal_assert(it != bt.end());
+            const Box &box = it->second;
+            strings.push_back(space);
+            strings.push_back(Expr((int) box.bounds.size()));
+            for (const Interval &i : box.bounds) {
+                internal_assert(i.min.defined() && i.max.defined());
+                strings.push_back(space);
+                strings.push_back(i.min);
+                strings.push_back(space);
+                // Emit as (min, extent) rather than (min, max)
+                strings.push_back(i.max - i.min + 1);
+            }
+            builder.trace_tag_expr = Internal::Call::make(type_of<const char *>(),
+                Internal::Call::stringify, strings, Internal::Call::Intrinsic);
+            s = Block::make(Evaluate::make(builder.build()), s);
         }
 
         s = LetStmt::make("pipeline.trace_id", pipeline_start, s);

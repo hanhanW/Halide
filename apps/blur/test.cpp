@@ -157,14 +157,20 @@ Buffer<uint16_t> blur_halide(Buffer<uint16_t> in) {
 }
 
 int main(int argc, char **argv) {
-#ifndef HALIDE_RUNTIME_HEXAGON
-    const int width = 6408;
-    const int height = 4802;
-#else
+    bool small = false;
+#ifdef HALIDE_RUNTIME_HEXAGON
     // The Hexagon simulator can't allocate as much memory as the above wants.
-    const int width = 648;
-    const int height = 482;
+    small = true;
 #endif
+
+    for (int i = 1; i < argc; ++i) {
+        if (!strcmp(argv[i], "--small")) {
+            small = true;
+        }
+    }
+
+    const int width = small ? 648 : 6408;
+    const int height = small ? 482 : 4802;
     Buffer<uint16_t> input(width, height);
 
     for (int y = 0; y < input.height(); y++) {

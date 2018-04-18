@@ -64,3 +64,13 @@ test: $(BIN)/bench_fft
 	$(BIN)/bench_fft 16 16 $(BIN)/
 	$(BIN)/bench_fft 32 32 $(BIN)/
 	$(BIN)/bench_fft 48 48 $(BIN)/
+
+../../bin/HalideTraceViz: ../../util/HalideTraceViz.cpp
+	$(MAKE) -C ../../ bin/HalideTraceViz
+
+$(BIN)/viz_auto.mp4: $(BIN)/fft_aot_test ../support/viz_auto.sh ../../bin/HalideTraceViz
+	@mkdir -p $(@D)
+	bash ../support/viz_auto.sh "$(BIN)/fft_aot_test" ../../bin/HalideTraceViz $@
+
+viz_auto: $(BIN)/viz_auto.mp4
+	mplayer $^
