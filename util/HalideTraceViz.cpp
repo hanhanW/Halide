@@ -447,6 +447,7 @@ void finalize_func_config_values(map<string, FuncInfo> &func_info) {
         }
 
         safe.merge_from(fi.config);
+        safe.uninitialized_memory_color |= 0xff000000;
         fi.config = safe;
     }
 }
