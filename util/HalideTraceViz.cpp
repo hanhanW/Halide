@@ -409,125 +409,127 @@ void do_decay(int decay_factor, std::vector<uint32_t> &storage) {
 
 // Given a FuncConfig, check each field for "use some reasonable default"
 // value and fill in something reasonable.
+void finalize_func_config_values(FuncInfo &fi) {
+    // Make a FuncConfig with 'safe' defaults for everything,
+    // then merge the existing cfg into it.
+    FuncConfig safe;
+    safe.zoom = 1.f;
+    safe.load_cost = 0;
+    safe.store_cost = 1;
+    safe.pos = {0, 0};
+    safe.strides = { {1, 0}, {0, 1} };
+    safe.color_dim = -1;
+    safe.min = 0.0;
+    safe.max = 1.0;
+    safe.labels = {};
+    safe.blank_on_end_realization = 0;
+    safe.uninitialized_memory_color = 0x00000000;
+
+    if (fi.type_and_dim_valid) {
+        // Try to choose better values for min and max based on type.
+        // TODO: only considers the first type given; in general,
+        // HTV doesn't deal with Tuple-valued Funcs very well.
+        const halide_type_t &type = fi.type_and_dim.types.at(0);
+        if (type.code == halide_type_uint) {
+            safe.max = (double) ((1 << type.bits) - 1);
+        } else if (type.code == halide_type_int) {
+            double d = (double) (1 << (type.bits - 1));
+            safe.max = d - 1;
+            // safe.min = -d;
+            // In practice, assuming a min of zero (rather then -INT_MIN)
+            // for signed types produces less-weird results.
+            safe.min = 0.0;
+        }
+    }
+
+    safe.merge_from(fi.config);
+    safe.uninitialized_memory_color |= 0xff000000;
+    fi.config = safe;
+}
+
+// Given a FuncConfig, check each field for "use some reasonable default"
+// value and fill in something reasonable.
 void finalize_func_config_values(map<string, FuncInfo> &func_info) {
     for (auto &p : func_info) {
-        const string &func_name = p.first;
         auto &fi = p.second;
-
-        // Make a FuncConfig with 'safe' defaults for everything,
-        // then merge the existing cfg into it.
-        FuncConfig safe;
-        safe.zoom = 1.f;
-        safe.load_cost = 0;
-        safe.store_cost = 1;
-        safe.pos = {0, 0};
-        safe.strides = { {1, 0}, {0, 1} };
-        safe.color_dim = -1;
-        safe.min = 0.0;
-        safe.max = 1.0;
-        safe.labels = {};
-        safe.blank_on_end_realization = 0;
-        safe.uninitialized_memory_color = 0x00000000;
-
-        if (fi.type_and_dim_valid) {
-            // Try to choose better values for min and max based on type.
-            // TODO: only considers the first type given; in general,
-            // HTV doesn't deal with Tuple-valued Funcs very well.
-            const halide_type_t &type = fi.type_and_dim.types.at(0);
-            if (type.code == halide_type_uint) {
-                safe.max = (double) ((1 << type.bits) - 1);
-            } else if (type.code == halide_type_int) {
-                double d = (double) (1 << (type.bits - 1));
-                safe.max = d - 1;
-                // safe.min = -d;
-                // In practice, assuming a min of zero (rather then -INT_MIN)
-                // for signed types produces less-weird results.
-                safe.min = 0.0;
-            }
-        }
-
-        safe.merge_from(fi.config);
-        safe.uninitialized_memory_color |= 0xff000000;
-        fi.config = safe;
+        finalize_func_config_values(fi);
     }
 }
 
-void do_auto_layout(const GlobalConfig &global, map<string, FuncInfo> &func_info) {
+void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global, const string &func_name, FuncInfo &fi) {
+    if (fi.config_valid) {
+        return;
+    }
+
     const Point &pad = global.auto_layout_pad;
     Point cell_size = {
         global.frame_size.x / global.auto_layout_grid.x,
         global.frame_size.y / global.auto_layout_grid.y
     };
-    int row = 0, col = 0;
-    for (auto &p : func_info) {
-        const string &func_name = p.first;
-        auto &fi = p.second;
-        if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
-            // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
-            if (fi.type_and_dim.dims.size() == 3 && (fi.type_and_dim.dims[2].extent == 3 || fi.type_and_dim.dims[2].extent == 4)) {
-                fi.config.color_dim = 2;
-            }
-        }
 
-        if (fi.config.zoom < 0.f && fi.type_and_dim_valid) {
-            // Ensure that all of the FuncInfos have strides that match
-            // the number of dimensions expected by FuncTypeAndDim, adding
-            // zero-stride pairs as needed (this simplifies rendering checks
-            // later on)
-            if (fi.config.strides.empty()) {
-                fi.config.strides = { {1, 0}, {0, 1} };
-            }
-            while (fi.config.strides.size() < fi.type_and_dim.dims.size()) {
-                fi.config.strides.push_back({0, 0});
-            }
+    int row = func_appearance_order / global.auto_layout_grid.x;
+    int col = func_appearance_order % global.auto_layout_grid.x;
 
-            // Calc the 2d size that this would render at (including stride-stretching) for zoom=1
-            Point size;
-            calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &size);
-            std::cerr << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
-
-            // Use that size to calculate the zoom we need -- this chooses
-            // a zoom that maximizes the size within the cell.
-            float zoom_x = (float) (cell_size.x - pad.x) / (float) size.x;
-            float zoom_y = (float) (cell_size.y - pad.y) / (float) size.y;
-            fi.config.zoom = std::min(zoom_x, zoom_y);
-
-            // Try to choose an even-multiple zoom for better display
-            // and just less weirdness.
-            if (fi.config.zoom > 100.f) {
-                // Zooms this large are usually for things like input matrices.
-                // Perhaps clamp at something smaller?
-                fi.config.zoom = floor(fi.config.zoom / 100.f) * 100.f;
-            } else if (fi.config.zoom > 10.f) {
-                fi.config.zoom = floor(fi.config.zoom / 10.f) * 10.f;
-            } else if (fi.config.zoom > 1.f) {
-                fi.config.zoom = floor(fi.config.zoom * 2.f) / 2.f;
-            } else if (fi.config.zoom < 1.f) {
-                fi.config.zoom = ceil(fi.config.zoom * 20.f) / 20.f;
-            }
-        }
-
-        // Put the image at the top-left of the cell. (Should we try to
-        // center within the cell?)
-        if (fi.config.pos.x < 0 && fi.config.pos.y < 0) {
-            fi.config.pos.x = col * cell_size.x + pad.x;
-            fi.config.pos.y = row * cell_size.y + pad.y;
-        }
-
-        if (fi.config.labels.empty()) {
-            string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
-            fi.config.labels.push_back({label, {0, 0}, 10});
-        }
-
-        fi.config_valid = true;
-
-        // advance to next cell
-        col++;
-        if (col >= global.auto_layout_grid.x) {
-            col = 0;
-            row++;
+    if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
+        // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
+        if (fi.type_and_dim.dims.size() == 3 && (fi.type_and_dim.dims[2].extent == 3 || fi.type_and_dim.dims[2].extent == 4)) {
+            fi.config.color_dim = 2;
         }
     }
+
+    if (fi.config.zoom < 0.f && fi.type_and_dim_valid) {
+        // Ensure that all of the FuncInfos have strides that match
+        // the number of dimensions expected by FuncTypeAndDim, adding
+        // zero-stride pairs as needed (this simplifies rendering checks
+        // later on)
+        if (fi.config.strides.empty()) {
+            fi.config.strides = { {1, 0}, {0, 1} };
+        }
+        while (fi.config.strides.size() < fi.type_and_dim.dims.size()) {
+            fi.config.strides.push_back({0, 0});
+        }
+
+        // Calc the 2d size that this would render at (including stride-stretching) for zoom=1
+        Point size;
+        calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &size);
+        std::cerr << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
+
+        // Use that size to calculate the zoom we need -- this chooses
+        // a zoom that maximizes the size within the cell.
+        float zoom_x = (float) (cell_size.x - pad.x) / (float) size.x;
+        float zoom_y = (float) (cell_size.y - pad.y) / (float) size.y;
+        fi.config.zoom = std::min(zoom_x, zoom_y);
+        std::cerr << "zoom for " << func_name << " is " << zoom_x  << " " << zoom_y << "\n";
+
+        // Try to choose an even-multiple zoom for better display
+        // and just less weirdness.
+        if (fi.config.zoom > 100.f) {
+            // Zooms this large are usually for things like input matrices.
+            // Perhaps clamp at something smaller?
+            fi.config.zoom = floor(fi.config.zoom / 100.f) * 100.f;
+        } else if (fi.config.zoom > 10.f) {
+            fi.config.zoom = floor(fi.config.zoom / 10.f) * 10.f;
+        } else if (fi.config.zoom > 1.f) {
+            fi.config.zoom = floor(fi.config.zoom * 2.f) / 2.f;
+        } else if (fi.config.zoom < 1.f) {
+            fi.config.zoom = ceil(fi.config.zoom * 20.f) / 20.f;
+        }
+    }
+
+    // Put the image at the top-left of the cell. (Should we try to
+    // center within the cell?)
+    if (fi.config.pos.x < 0 && fi.config.pos.y < 0) {
+        fi.config.pos.x = col * cell_size.x + pad.x;
+        fi.config.pos.y = row * cell_size.y + pad.y;
+    }
+    std::cerr << "pos for " << func_name << " is " << fi.config.pos.x  << " " << fi.config.pos.y << "\n";
+
+    if (fi.config.labels.empty()) {
+        string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
+        fi.config.labels.push_back({label, {0, 0}, 10});
+    }
+
+    fi.config_valid = true;
 }
 
 float calc_side_length(int min_cells, int width, int height) {
@@ -751,6 +753,7 @@ int run(int argc, char **argv) {
 
     map<uint32_t, PipelineInfo> pipeline_info;
 
+    int func_appearance_order = 0;
     list<pair<Label, int>> labels_being_drawn;
     size_t end_counter = 0;
     size_t packet_clock = 0;
@@ -881,24 +884,6 @@ int run(int argc, char **argv) {
                     << " using " << global.auto_layout_grid.x << "x" << global.auto_layout_grid.y << " grid"
                     << " with cells of size " << cell_size.x << "x" << cell_size.y << "\n";
             }
-            if (global.auto_layout) {
-                do_auto_layout(global, func_info);
-            }
-
-            // Ensure that all FuncConfigs have reasonable values.
-            finalize_func_config_values(func_info);
-
-            // dump after any tags are handled
-            global.dump(std::cerr);
-            for (const auto &p : func_info) {
-                const auto &fi = p.second;
-                if (fi.type_and_dim_valid) {
-                    fi.type_and_dim.dump(std::cerr, p.first);
-                }
-                if (fi.config_valid) {
-                    fi.config.dump(std::cerr, p.first);
-                }
-            }
         }
 
         PipelineInfo pipeline = pipeline_info[p.parent_id];
@@ -929,10 +914,15 @@ int run(int argc, char **argv) {
 
         // Draw the event
         FuncInfo &fi = func_info[qualified_name];
-        if (!fi.config_valid) continue;
 
         if (fi.stats.first_draw_time < 0) {
             fi.stats.first_draw_time = halide_clock;
+
+            if (global.auto_layout) {
+                auto_layout_if_needed(func_appearance_order++, global, p.func(), fi);
+            }
+            finalize_func_config_values(fi);
+
             for (const auto &label : fi.config.labels) {
                 // Convert offset to absolute position before enqueuing
                 Label l = label;
@@ -941,6 +931,11 @@ int run(int argc, char **argv) {
                 labels_being_drawn.push_back({l, halide_clock});
             }
         }
+
+        // Check after first_draw_time, since auto_layout on first "draw"
+        // could change the value
+        if (!fi.config_valid) continue;
+
 
         if (fi.stats.first_packet_idx < 0) {
             fi.stats.first_packet_idx = packet_clock;
@@ -1085,6 +1080,18 @@ int run(int argc, char **argv) {
     }
 
     std::cerr << "Total number of Funcs: " << func_info.size() << "\n";
+
+    // Dump this info at the end, since some is determined as we go
+    global.dump(std::cerr);
+    for (const auto &p : func_info) {
+        const auto &fi = p.second;
+        if (fi.type_and_dim_valid) {
+            fi.type_and_dim.dump(std::cerr, p.first);
+        }
+        if (fi.config_valid) {
+            fi.config.dump(std::cerr, p.first);
+        }
+    }
 
     // Print stats about the Func gleaned from the trace.
     vector<std::pair<std::string, FuncInfo> > funcs;

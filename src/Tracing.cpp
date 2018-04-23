@@ -50,8 +50,8 @@ public:
     vector<pair<string, vector<string>>> trace_tags;
     set<string> trace_tags_added;
     // The funcs that will have any tracing info emitted (not just trace tags),
-    // in the order we see them.
-    vector<pair<string, vector<Type>>> funcs_touched;
+    // and the Type(s) of their elements.
+    map<string, vector<Type>> funcs_touched;
 
     InjectTracing(const map<string, Function> &e, const Target &t)
         : env(e),
@@ -71,13 +71,11 @@ private:
     }
 
     void add_func_touched(const string &name, int value_index, const Type &type) {
-        // List is usually small, so linear search is fine
-        auto it = std::find_if(funcs_touched.begin(), funcs_touched.end(),
-                               [name](const pair<string, vector<Type>> &p) -> bool { return p.first == name; });
+        auto it = funcs_touched.find(name);
         if (it == funcs_touched.end()) {
             vector<Type> types(value_index+1);
             types[value_index] = type;
-            funcs_touched.push_back({name, std::move(types)});
+            funcs_touched[name] = types;
         } else {
             // If the type already present is missing, or "handle0" (aka "we don't know yet",
             // replace it with the given type. Otherwise, assert the types match.
@@ -380,7 +378,7 @@ Stmt inject_tracing(Stmt s, const string &pipeline_name,
         builder.event = halide_trace_tag;
 
         // Compute boxes_touched and send a func_type_and_dim trace-tag for
-        // everything that we actually touched, in the order we encountered them.
+        // everything that we actually touched, in alphabetical order by func name.
         // We include the type(s) of each Func (could be multiple for Tuple-valued
         // Funcs), and the dimensions and guess-at-ranges-rouched. Note that the
         // dimensions should be exact, but the ranges-touched is a conservative estimate;
