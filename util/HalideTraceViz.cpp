@@ -146,13 +146,7 @@ void composite(uint8_t *a, uint8_t *b, uint8_t *dst) {
     }
 }
 
-static constexpr int FONT_W = 12;
-static constexpr int FONT_H = 32;
-
 void draw_text(const std::string &text, const Point &pos, uint32_t color, uint32_t *dst, const Point &dst_size) {
-    // The font array contains 96 characters of FONT_W * FONT_H letters.
-    assert(inconsolata_raw_len == 96 * FONT_W * FONT_H);
-
     // Drop any alpha component of color
     color &= 0xffffff;
 
@@ -161,19 +155,19 @@ void draw_text(const std::string &text, const Point &pos, uint32_t color, uint32
         ++c;
 
         // We only handle a subset of ascii
-        if (chr < 32 || chr > 127) {
+        if (chr < 32 || chr >= 32 + inconsolata_char_count) {
             chr = 32;
         }
         chr -= 32;
 
-        uint8_t *font_ptr = inconsolata_raw + chr * (FONT_W * FONT_H);
-        for (int fy = 0; fy < FONT_H; fy++) {
-            for (int fx = 0; fx < FONT_W; fx++) {
-                int px = pos.x + FONT_W*c + fx;
-                int py = pos.y - FONT_H + fy + 1;
+        const uint8_t *font_ptr = inconsolata_raw + chr * (inconsolata_char_width * inconsolata_char_height);
+        for (int fy = 0; fy < inconsolata_char_height; fy++) {
+            for (int fx = 0; fx < inconsolata_char_width; fx++) {
+                int px = pos.x + inconsolata_char_width*c + fx;
+                int py = pos.y - inconsolata_char_height + fy + 1;
                 if (px < 0 || px >= dst_size.x ||
                     py < 0 || py >= dst_size.y) continue;
-                dst[py * dst_size.x + px] = (font_ptr[fy * FONT_W + fx] << 24) | color;
+                dst[py * dst_size.x + px] = (font_ptr[fy * inconsolata_char_width + fx] << 24) | color;
             }
         }
     }
