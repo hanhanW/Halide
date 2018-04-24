@@ -838,25 +838,9 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
     }
 }
 
-int run(int argc, char **argv) {
-    if (argc == 1) {
-        std::cerr << usage();
-        return 0;
-    }
+using FlagProcessor = std::function<void(GlobalConfig &, map<string, FuncInfo> &)>;
 
-    bool ignore_trace_tags = false;
-    for (int i = 1; i < argc; ++i) {
-        if (!strcmp(argv[i], "--ignore_tags")) {
-            ignore_trace_tags = true;
-        } else if (!strcmp(argv[i], "--no-ignore_tags")) {
-            ignore_trace_tags = false;
-        } else if (!strcmp(argv[i], "--verbose")) {
-            verbose = true;
-        } else if (!strcmp(argv[i], "--no-verbose")) {
-            verbose = false;
-        }
-    }
-
+int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     // State that determines how different funcs get drawn
     GlobalConfig global;
     map<string, FuncInfo> func_info;
@@ -1010,7 +994,7 @@ int run(int argc, char **argv) {
             // We wait until now to process the cmd-line args;
             // this allows us to override trace-tag specifications
             // via the commandline, which is handy for experimentations.
-            process_args(argc, argv, global, func_info);
+            flag_processor(global, func_info);
 
             // allocate the buffers after all tags and flags are processed
             buffers.resize(global.frame_size);
@@ -1263,5 +1247,27 @@ int run(int argc, char **argv) {
 }  // namespace
 
 int main(int argc, char **argv) {
-    run(argc, argv);
+    if (argc == 1) {
+        std::cerr << usage();
+        return 0;
+    }
+
+    bool ignore_trace_tags = false;
+    for (int i = 1; i < argc; ++i) {
+        if (!strcmp(argv[i], "--ignore_tags")) {
+            ignore_trace_tags = true;
+        } else if (!strcmp(argv[i], "--no-ignore_tags")) {
+            ignore_trace_tags = false;
+        } else if (!strcmp(argv[i], "--verbose")) {
+            verbose = true;
+        } else if (!strcmp(argv[i], "--no-verbose")) {
+            verbose = false;
+        }
+    }
+
+    FlagProcessor flag_processor = [argc, argv](GlobalConfig &global, map<string, FuncInfo> &func_info) -> void {
+        process_args(argc, argv, global, func_info);
+    };
+
+    run(ignore_trace_tags, flag_processor);
 }
