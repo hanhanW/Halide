@@ -41,6 +41,74 @@ using std::pair;
 using std::list;
 using std::set;
 
+bool verbose = false;
+
+// Log informational output to stderr, but only in verbose mode
+struct info {
+    std::ostringstream msg;
+
+    template<typename T>
+    info &operator<<(const T &x) {
+        if (verbose) {
+            msg << x;
+        }
+        return *this;
+    }
+
+    ~info() {
+        if (verbose) {
+            if (msg.str().back() != '\n') {
+                msg << '\n';
+            }
+            std::cerr << msg.str();
+        }
+    }
+};
+
+// Log warnings to stderr
+struct warn {
+    std::ostringstream msg;
+
+    template<typename T>
+    warn &operator<<(const T &x) {
+        msg << x;
+        return *this;
+    }
+
+    ~warn() {
+        if (msg.str().back() != '\n') {
+            msg << '\n';
+        }
+        std::cerr << "Warning: " << msg.str();
+    }
+};
+
+// Log unrecoverable errors to stderr, then exit
+struct fail {
+    std::ostringstream msg;
+
+    template<typename T>
+    fail &operator<<(const T &x) {
+        msg << x;
+        return *this;
+    }
+
+    #ifdef _MSC_VER
+    #pragma warning(push)
+    #pragma warning(disable:4722)  // destructor never returns, potential memory leak
+    #endif
+    ~fail() {
+        if (msg.str().back() != '\n') {
+            msg << '\n';
+        }
+        std::cerr << msg.str();
+        exit(1);
+    }
+    #ifdef _MSC_VER
+    #pragma warning(pop)
+    #endif
+};
+
 // Combine type-and-code into a single integer to avoid nested switches.
 // Must be constexpr to allow use in case clauses.
 inline static constexpr int halide_type_code(halide_type_code_t code, int bits) {
@@ -62,8 +130,7 @@ T value_as(const halide_type_t &type, const halide_scalar_value_t& value) {
         case halide_type_code(halide_type_float, 32): return (T) value.u.f32;
         case halide_type_code(halide_type_float, 64): return (T) value.u.f64;
         default:
-            fprintf(stderr, "Can't convert packet with type: %d bits: %d\n", (int) type.code, type.bits);
-            exit(-1);
+            fail() << "Can't convert packet with type: " << (int) type.code << "bits: " << type.bits;
             return (T) 0;
     }
 }
@@ -92,8 +159,7 @@ struct PacketAndPayload : public halide_trace_packet_t {
             if (bytes_read == 0) {
                 return false;  // EOF
             } else if (bytes_read < 0) {
-                fprintf(stderr, "Unable to read packet\n");
-                exit(1);
+                fail() << "Unable to read packet";
             }
             p += bytes_read;
         }
@@ -108,14 +174,9 @@ struct PacketAndPayload : public halide_trace_packet_t {
         }
 
         const size_t payload_size = this->size - header_size;
-        if (payload_size > sizeof(this->payload)) {
-            fprintf(stderr, "Payload larger than %d bytes in trace stream (%d)\n", (int)sizeof(this->payload), (int)payload_size);
-            exit(1);
-        }
-        if (!read_or_die(this->payload, payload_size)) {
+        if (payload_size > sizeof(this->payload) || !read_or_die(this->payload, payload_size)) {
             // Shouldn't ever get EOF here
-            fprintf(stderr, "Unable to read packet payload\n");
-            exit(1);
+            fail() << "Unable to read packet payload of size " << payload_size;
         }
         return true;
     }
@@ -186,24 +247,24 @@ struct FuncInfo {
         }
 
         void report() {
-            std::cerr <<
-                    "Func " << qualified_name << ":\n";
+            std::ostringstream o;
             for (int i = 0; i < 16; i++) {
                 if (min_coord[i] == 0 && max_coord[i] == 0) {
                     break;
                 }
                 if (i > 0) {
-                    std::cerr << " x ";
+                    o << " x ";
                 }
-                std::cerr << "[" << min_coord[i] << ", " << max_coord[i] << ")";
+                o << "[" << min_coord[i] << ", " << max_coord[i] << ")";
             }
-            std::cerr <<
-                    "\n"
-                    " range of values: [" << min_value << ", " << max_value << "]\n"
-                    " number of realizations: " << num_realizations << "\n"
-                    " number of productions: " << num_productions << "\n"
-                    " number of loads: " << loads << "\n"
-                    " number of stores: " << stores << "\n";
+            info()
+                << "Func " << qualified_name << ":\n"
+                << o.str() << "\n"
+                << " range of values: [" << min_value << ", " << max_value << "]\n"
+                << " number of realizations: " << num_realizations << "\n"
+                << " number of productions: " << num_productions << "\n"
+                << " number of loads: " << loads << "\n"
+                << " number of stores: " << stores << "\n";
         }
 
     } stats;
@@ -257,8 +318,8 @@ void draw_text(const std::string &text, const Point &pos, uint32_t color, uint32
     }
 }
 
-void usage() {
-    std::cerr <<
+std::string usage() {
+    return
             R"USAGE(
 HalideTraceViz accepts Halide-generated binary tracing packets from
 stdin, and outputs them as raw 8-bit rgba32 pixel values to
@@ -367,17 +428,6 @@ Funcs.
 ))USAGE";
 }
 
-// If the condition is false, print usage and exit with error.
-void expect(bool cond, int i) {
-    if (!cond) {
-        if (i) {
-            std::cerr << "Argument parsing failed at argument " << i << "\n";
-        }
-        usage();
-        exit(-1);
-    }
-}
-
 // Set all boxes corresponding to positions in a Func's allocation to
 // the given color. Recursive to handle arbitrary
 // dimensionalities. Used by begin and end realization events.
@@ -441,9 +491,7 @@ int parse_int(const char *str) {
     errno = 0;
     long result = strtol(str, &endptr, 0);
     if (errno == ERANGE || str == endptr) {
-        std::cerr << "Unable to parse '" << str << "' as an int\n";
-        usage();
-        exit(-1);
+        fail() << "Unable to parse '" << str << "' as an int\n" << usage();
     }
     return (int) result;
 }
@@ -453,9 +501,7 @@ float parse_float(const char *str) {
     errno = 0;
     float result = strtof(str, &endptr);
     if (errno == ERANGE || str == endptr) {
-        std::cerr << "Unable to parse '" << str << "' as a float\n";
-        usage();
-        exit(-1);
+        fail() << "Unable to parse '" << str << "' as a float\n" << usage();
     }
     return result;
 }
@@ -465,9 +511,7 @@ double parse_double(const char *str) {
     errno = 0;
     double result = strtod(str, &endptr);
     if (errno == ERANGE || str == endptr) {
-        std::cerr << "Unable to parse '" << str << "' as a double\n";
-        usage();
-        exit(-1);
+        fail() << "Unable to parse '" << str << "' as a double\n" << usage();
     }
     return result;
 }
@@ -571,14 +615,14 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
         // Calc the 2d size that this would render at (including stride-stretching) for zoom=1
         Point size;
         calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &size);
-        std::cerr << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
+        info() << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
 
         // Use that size to calculate the zoom we need -- this chooses
         // a zoom that maximizes the size within the cell.
         float zoom_x = (float) (cell_size.x - pad.x) / (float) size.x;
         float zoom_y = (float) (cell_size.y - pad.y) / (float) size.y;
         fi.config.zoom = std::min(zoom_x, zoom_y);
-        std::cerr << "zoom for " << func_name << " is " << zoom_x  << " " << zoom_y << "\n";
+        info() << "zoom for " << func_name << " is " << zoom_x  << " " << zoom_y << "\n";
 
         // Try to choose an even-multiple zoom for better display
         // and just less weirdness.
@@ -601,7 +645,7 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
         fi.config.pos.x = col * cell_size.x + pad.x;
         fi.config.pos.y = row * cell_size.y + pad.y;
     }
-    std::cerr << "pos for " << func_name << " is " << fi.config.pos.x  << " " << fi.config.pos.y << "\n";
+    info() << "pos for " << func_name << " is " << fi.config.pos.x  << " " << fi.config.pos.y << "\n";
 
     if (fi.config.labels.empty()) {
         string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
@@ -639,6 +683,17 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
     FuncConfig config;
     vector<Point> pos_stack;
     set<string> labels_seen;
+
+    // If the condition is false, print usage and exit with error.
+    const auto expect = [](bool cond, int i) {
+        if (!cond) {
+            if (i) {
+                fail() << "Argument parsing failed at argument " << i << "\n" << usage();
+            } else {
+                fail() << usage();
+            }
+        }
+    };
 
     // Parse command line args
     int i = 1;
@@ -774,6 +829,8 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             global.auto_layout_grid.y = parse_int(argv[++i]);
         } else if (next == "--ignore_tags" || next == "--no-ignore_tags") {
             // Already processed, just continue
+        } else if (next == "--verbose" || next == "--no-verbose") {
+            // Already processed, just continue
         } else {
             expect(false, i);
         }
@@ -783,7 +840,7 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
 
 int run(int argc, char **argv) {
     if (argc == 1) {
-        usage();
+        std::cerr << usage();
         return 0;
     }
 
@@ -793,6 +850,10 @@ int run(int argc, char **argv) {
             ignore_trace_tags = true;
         } else if (!strcmp(argv[i], "--no-ignore_tags")) {
             ignore_trace_tags = false;
+        } else if (!strcmp(argv[i], "--verbose")) {
+            verbose = true;
+        } else if (!strcmp(argv[i], "--no-verbose")) {
+            verbose = false;
         }
     }
 
@@ -874,8 +935,7 @@ int run(int argc, char **argv) {
                 // Dump the frame
                 ssize_t bytes_written = write(STDOUT_FILENO, buffers.blend.data(), frame_bytes);
                 if (bytes_written < frame_bytes) {
-                    std::cerr << "Could not write frame to stdout.\n";
-                    return -1;
+                    fail() << "Could not write frame to stdout.";
                 }
 
                 video_clock += global.timestep;
@@ -916,8 +976,8 @@ int run(int argc, char **argv) {
                 // rather than fail.
                 // TODO: May need to check parent_id here, as nested
                 // pipelines called via define_extern could emit these.
-                std::cerr << "Warning: trace_tags are only expected at the start of a visualization:"
-                    << " (" << p.trace_tag() << ") for func (" << p.func() << ")\n";
+                warn() << "trace_tags are only expected at the start of a visualization:"
+                    << " (" << p.trace_tag() << ") for func (" << p.func() << ")";
             }
             if (FuncConfig::match(p.trace_tag())) {
                 if (ignore_trace_tags) {
@@ -931,7 +991,7 @@ int run(int argc, char **argv) {
                     continue;
                 }
                 if (seen_global_config_tag) {
-                    std::cerr << "Warning, saw multiple GlobalConfig trace_tags, some will be ignored.\n";
+                    warn() << "saw multiple GlobalConfig trace_tags, some will be ignored.";
                 }
                 global = GlobalConfig(p.trace_tag());
                 seen_global_config_tag = true;
@@ -939,7 +999,7 @@ int run(int argc, char **argv) {
                 func_info[p.func()].type_and_dim = FuncTypeAndDim(p.trace_tag());
                 func_info[p.func()].type_and_dim_valid = true;
             } else {
-                std::cerr << "Ignoring trace_tag: (" << p.trace_tag() << ") for func (" << p.func() << ")\n";
+                warn() << "Ignoring trace_tag: (" << p.trace_tag() << ") for func (" << p.func() << ")";
             }
             continue;
         }
@@ -964,9 +1024,9 @@ int run(int argc, char **argv) {
                 global.auto_layout_grid.x = global.frame_size.x / cell_size.x;
                 global.auto_layout_grid.y = global.frame_size.y / cell_size.y;
                 assert(global.auto_layout_grid.x * global.auto_layout_grid.y >= cells_needed);
-                std::cerr << "For cells_needed = " << cells_needed
+                info() << "For cells_needed = " << cells_needed
                     << " using " << global.auto_layout_grid.x << "x" << global.auto_layout_grid.y << " grid"
-                    << " with cells of size " << cell_size.x << "x" << cell_size.y << "\n";
+                    << " with cells of size " << cell_size.x << "x" << cell_size.y;
             }
         }
 
@@ -991,8 +1051,8 @@ int run(int argc, char **argv) {
                 func_info[qualified_name] = func_info[p.func()];
                 func_info.erase(p.func());
             } else {
-                std::cerr << "Warning: ignoring func " << qualified_name << " event " << p.event << "\n";
-                std::cerr << "Parent event " << p.parent_id << " " << pipeline.name << "\n";
+                warn() << "Warning: ignoring func " << qualified_name << " event " << p.event <<
+                          "; parent event " << p.parent_id << " " << pipeline.name;
             }
         }
 
@@ -1158,40 +1218,43 @@ int run(int argc, char **argv) {
         case halide_trace_tag:
             break;
         default:
-            std::cerr << "Unknown tracing event code: " << p.event << "\n";
-            exit(-1);
+            fail() << "Unknown tracing event code: " << p.event;
         }
 
     }
 
-    std::cerr << "Total number of Funcs: " << func_info.size() << "\n";
+    if (verbose) {
+        info() << "Total number of Funcs: " << func_info.size();
 
-    // Dump this info at the end, since some is determined as we go
-    global.dump(std::cerr);
-    for (const auto &p : func_info) {
-        const auto &fi = p.second;
-        if (fi.type_and_dim_valid) {
-            fi.type_and_dim.dump(std::cerr, p.first);
+        // Dump this info at the end, since some is determined as we go
+        std::ostringstream dumps;
+        global.dump(dumps);
+        for (const auto &p : func_info) {
+            const auto &fi = p.second;
+            if (fi.type_and_dim_valid) {
+                fi.type_and_dim.dump(dumps, p.first);
+            }
+            if (fi.config_valid) {
+                fi.config.dump(dumps, p.first);
+            }
         }
-        if (fi.config_valid) {
-            fi.config.dump(std::cerr, p.first);
-        }
-    }
+        info() << dumps.str();
 
-    // Print stats about the Func gleaned from the trace.
-    vector<std::pair<std::string, FuncInfo> > funcs;
-    for (std::pair<std::string, FuncInfo> p : func_info) {
-        funcs.push_back(p);
-    }
-    struct by_first_packet_idx {
-        bool operator()(const std::pair<std::string, FuncInfo> &a,
-                        const std::pair<std::string, FuncInfo> &b) const {
-            return a.second.stats.first_packet_idx < b.second.stats.first_packet_idx;
+        // Print stats about the Func gleaned from the trace.
+        vector<std::pair<std::string, FuncInfo> > funcs;
+        for (std::pair<std::string, FuncInfo> p : func_info) {
+            funcs.push_back(p);
         }
-    };
-    std::sort(funcs.begin(), funcs.end(), by_first_packet_idx());
-    for (std::pair<std::string, FuncInfo> p : funcs) {
-        p.second.stats.report();
+        struct by_first_packet_idx {
+            bool operator()(const std::pair<std::string, FuncInfo> &a,
+                            const std::pair<std::string, FuncInfo> &b) const {
+                return a.second.stats.first_packet_idx < b.second.stats.first_packet_idx;
+            }
+        };
+        std::sort(funcs.begin(), funcs.end(), by_first_packet_idx());
+        for (std::pair<std::string, FuncInfo> p : funcs) {
+            p.second.stats.report();
+        }
     }
 
     return 0;
