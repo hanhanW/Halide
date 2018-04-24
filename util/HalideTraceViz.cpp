@@ -270,6 +270,11 @@ struct FuncInfo {
     } stats;
 };
 
+struct VizState {
+    GlobalConfig globals;
+    map<string, FuncInfo> funcs;
+};
+
 // Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst
 void composite(const uint32_t *under, const uint32_t *over, uint32_t *dst) {
     const uint32_t o = *over;
@@ -572,26 +577,26 @@ void finalize_func_config_values(FuncInfo &fi) {
 
 // Given a FuncConfig, check each field for "use some reasonable default"
 // value and fill in something reasonable.
-void finalize_func_config_values(map<string, FuncInfo> &func_info) {
-    for (auto &p : func_info) {
+void finalize_func_config_values(map<string, FuncInfo> &funcs) {
+    for (auto &p : funcs) {
         auto &fi = p.second;
         finalize_func_config_values(fi);
     }
 }
 
-void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global, const string &func_name, FuncInfo &fi) {
+void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &globals, const string &func_name, FuncInfo &fi) {
     if (fi.config_valid) {
         return;
     }
 
-    const Point &pad = global.auto_layout_pad;
+    const Point &pad = globals.auto_layout_pad;
     Point cell_size = {
-        global.frame_size.x / global.auto_layout_grid.x,
-        global.frame_size.y / global.auto_layout_grid.y
+        globals.frame_size.x / globals.auto_layout_grid.x,
+        globals.frame_size.y / globals.auto_layout_grid.y
     };
 
-    int row = func_appearance_order / global.auto_layout_grid.x;
-    int col = func_appearance_order % global.auto_layout_grid.x;
+    int row = func_appearance_order / globals.auto_layout_grid.x;
+    int col = func_appearance_order % globals.auto_layout_grid.x;
 
     if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
         // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
@@ -678,7 +683,10 @@ Point best_cell_size(int min_cells, int width, int height) {
     return {edge, edge};
 }
 
-void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncInfo> &func_info) {
+void process_args(int argc, char **argv, VizState *state) {
+    GlobalConfig &globals = state->globals;
+    map<string, FuncInfo> &funcs = state->funcs;
+
     // The struct's default values are what we want
     FuncConfig config;
     vector<Point> pos_stack;
@@ -701,12 +709,12 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
         string next = argv[i];
         if (next == "--size") {
             expect(i + 2 < argc, i);
-            global.frame_size.x = parse_int(argv[++i]);
-            global.frame_size.y = parse_int(argv[++i]);
+            globals.frame_size.x = parse_int(argv[++i]);
+            globals.frame_size.y = parse_int(argv[++i]);
         } else if (next == "--func") {
             expect(i + 1 < argc, i);
             const char *func = argv[++i];
-            FuncInfo &fi = func_info[func];
+            FuncInfo &fi = funcs[func];
             fi.config.merge_from(config);
             fi.config_valid = true;
         } else if (next == "--min") {
@@ -773,7 +781,7 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             char *func = argv[++i];
             char *text = argv[++i];
             int n = parse_int(argv[++i]);
-            FuncInfo &fi = func_info[func];
+            FuncInfo &fi = funcs[func];
             // A Label's position is relative to its Func's position;
             // the --label flag has always expected an absolute position,
             // so convert it to an offset.
@@ -793,7 +801,7 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             int dx = parse_int(argv[++i]);
             int dy = parse_int(argv[++i]);
             int n = parse_int(argv[++i]);
-            FuncInfo &fi = func_info[func];
+            FuncInfo &fi = funcs[func];
             Point offset = { dx, dy };
             if (!labels_seen.count(func)) {
                 // If there is at least one --label specified for a Func,
@@ -805,14 +813,14 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             fi.config.labels.push_back({text, offset, n});
         } else if (next == "--timestep") {
             expect(i + 1 < argc, i);
-            global.timestep = parse_int(argv[++i]);
+            globals.timestep = parse_int(argv[++i]);
         } else if (next == "--decay") {
             expect(i + 2 < argc, i);
-            global.decay_factor_during_compute = parse_int(argv[++i]);
-            global.decay_factor_after_compute = parse_int(argv[++i]);
+            globals.decay_factor_during_compute = parse_int(argv[++i]);
+            globals.decay_factor_after_compute = parse_int(argv[++i]);
         } else if (next == "--hold") {
             expect(i + 1 < argc, i);
-            global.hold_frames = parse_int(argv[++i]);
+            globals.hold_frames = parse_int(argv[++i]);
         } else if (next == "--uninit") {
             expect(i + 3 < argc, i);
             int r = parse_int(argv[++i]);
@@ -820,13 +828,13 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
             int b = parse_int(argv[++i]);
             config.uninitialized_memory_color = ((b & 255) << 16) | ((g & 255) << 8) | (r & 255);
         } else if (next == "--auto_layout") {
-            global.auto_layout = true;
+            globals.auto_layout = true;
         } else if (next == "--no-auto_layout") {
-            global.auto_layout = false;
+            globals.auto_layout = false;
         } else if (next == "--auto_layout_grid") {
             expect(i + 2 < argc, i);
-            global.auto_layout_grid.x = parse_int(argv[++i]);
-            global.auto_layout_grid.y = parse_int(argv[++i]);
+            globals.auto_layout_grid.x = parse_int(argv[++i]);
+            globals.auto_layout_grid.y = parse_int(argv[++i]);
         } else if (next == "--ignore_tags" || next == "--no-ignore_tags") {
             // Already processed, just continue
         } else if (next == "--verbose" || next == "--no-verbose") {
@@ -838,12 +846,11 @@ void process_args(int argc, char **argv, GlobalConfig &global, map<string, FuncI
     }
 }
 
-using FlagProcessor = std::function<void(GlobalConfig &, map<string, FuncInfo> &)>;
+using FlagProcessor = std::function<void(VizState *state)>;
 
 int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     // State that determines how different funcs get drawn
-    GlobalConfig global;
-    map<string, FuncInfo> func_info;
+    VizState state;
 
     // halide_clock counts halide events. video_clock counts how many
     // of these events have been output. When halide_clock gets ahead
@@ -884,8 +891,8 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     for (;;) {
         // Hold for some number of frames once the trace has finished.
         if (end_counter) {
-            halide_clock += global.timestep;
-            if (end_counter >= (size_t) global.hold_frames) {
+            halide_clock += state.globals.timestep;
+            if (end_counter >= (size_t) state.globals.hold_frames) {
                 break;
             }
         }
@@ -922,13 +929,13 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     fail() << "Could not write frame to stdout.";
                 }
 
-                video_clock += global.timestep;
+                video_clock += state.globals.timestep;
 
                 // Decay the anim_decay
-                do_decay(global.decay_factor_after_compute, buffers.anim_decay);
+                do_decay(state.globals.decay_factor_after_compute, buffers.anim_decay);
 
                 // Also decay the anim
-                do_decay(global.decay_factor_during_compute, buffers.anim);
+                do_decay(state.globals.decay_factor_during_compute, buffers.anim);
             }
 
             // Blank anim
@@ -968,8 +975,8 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     continue;
                 }
                 FuncConfig cfg(p.trace_tag());
-                func_info[p.func()].config = cfg;
-                func_info[p.func()].config_valid = true;
+                state.funcs[p.func()].config = cfg;
+                state.funcs[p.func()].config_valid = true;
             } else if (GlobalConfig::match(p.trace_tag())) {
                 if (ignore_trace_tags) {
                     continue;
@@ -977,11 +984,11 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 if (seen_global_config_tag) {
                     warn() << "saw multiple GlobalConfig trace_tags, some will be ignored.";
                 }
-                global = GlobalConfig(p.trace_tag());
+                state.globals = GlobalConfig(p.trace_tag());
                 seen_global_config_tag = true;
             } else if (FuncTypeAndDim::match(p.trace_tag())) {
-                func_info[p.func()].type_and_dim = FuncTypeAndDim(p.trace_tag());
-                func_info[p.func()].type_and_dim_valid = true;
+                state.funcs[p.func()].type_and_dim = FuncTypeAndDim(p.trace_tag());
+                state.funcs[p.func()].type_and_dim_valid = true;
             } else {
                 warn() << "Ignoring trace_tag: (" << p.trace_tag() << ") for func (" << p.func() << ")";
             }
@@ -994,22 +1001,22 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             // We wait until now to process the cmd-line args;
             // this allows us to override trace-tag specifications
             // via the commandline, which is handy for experimentations.
-            flag_processor(global, func_info);
+            flag_processor(&state);
 
             // allocate the buffers after all tags and flags are processed
-            buffers.resize(global.frame_size);
+            buffers.resize(state.globals.frame_size);
 
-            if (global.auto_layout_grid.x < 0 || global.auto_layout_grid.y < 0) {
+            if (state.globals.auto_layout_grid.x < 0 || state.globals.auto_layout_grid.y < 0) {
                 int cells_needed = 0;
-                for (const auto &p : func_info) {
+                for (const auto &p : state.funcs) {
                     if (p.second.type_and_dim_valid) cells_needed++;
                 }
-                Point cell_size = best_cell_size(cells_needed, global.frame_size.x, global.frame_size.y);
-                global.auto_layout_grid.x = global.frame_size.x / cell_size.x;
-                global.auto_layout_grid.y = global.frame_size.y / cell_size.y;
-                assert(global.auto_layout_grid.x * global.auto_layout_grid.y >= cells_needed);
+                Point cell_size = best_cell_size(cells_needed, state.globals.frame_size.x, state.globals.frame_size.y);
+                state.globals.auto_layout_grid.x = state.globals.frame_size.x / cell_size.x;
+                state.globals.auto_layout_grid.y = state.globals.frame_size.y / cell_size.y;
+                assert(state.globals.auto_layout_grid.x * state.globals.auto_layout_grid.y >= cells_needed);
                 info() << "For cells_needed = " << cells_needed
-                    << " using " << global.auto_layout_grid.x << "x" << global.auto_layout_grid.y << " grid"
+                    << " using " << state.globals.auto_layout_grid.x << "x" << state.globals.auto_layout_grid.y << " grid"
                     << " with cells of size " << cell_size.x << "x" << cell_size.y;
             }
         }
@@ -1030,10 +1037,10 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
 
         string qualified_name = pipeline.name + ":" + p.func();
 
-        if (func_info.find(qualified_name) == func_info.end()) {
-            if (func_info.find(p.func()) != func_info.end()) {
-                func_info[qualified_name] = func_info[p.func()];
-                func_info.erase(p.func());
+        if (state.funcs.find(qualified_name) == state.funcs.end()) {
+            if (state.funcs.find(p.func()) != state.funcs.end()) {
+                state.funcs[qualified_name] = state.funcs[p.func()];
+                state.funcs.erase(p.func());
             } else {
                 warn() << "Warning: ignoring func " << qualified_name << " event " << p.event <<
                           "; parent event " << p.parent_id << " " << pipeline.name;
@@ -1041,13 +1048,13 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         }
 
         // Draw the event
-        FuncInfo &fi = func_info[qualified_name];
+        FuncInfo &fi = state.funcs[qualified_name];
 
         if (fi.stats.first_draw_time < 0) {
             fi.stats.first_draw_time = halide_clock;
 
-            if (global.auto_layout) {
-                auto_layout_if_needed(func_appearance_order++, global, p.func(), fi);
+            if (state.globals.auto_layout) {
+                auto_layout_if_needed(func_appearance_order++, state.globals, p.func(), fi);
             }
             finalize_func_config_values(fi);
 
@@ -1073,16 +1080,16 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         for (auto it = labels_being_drawn.begin(); it != labels_being_drawn.end(); ) {
             const Label &label = it->first;
             int first_draw_clock = it->second;
-            int frames_since_first_draw = (halide_clock - first_draw_clock) / global.timestep;
+            int frames_since_first_draw = (halide_clock - first_draw_clock) / state.globals.timestep;
             if (frames_since_first_draw < label.fade_in_frames) {
                 uint32_t color = ((1 + frames_since_first_draw) * 255) / std::max(1, label.fade_in_frames);
                 if (color > 255) color = 255;
                 color *= 0x10101;
-                draw_text(label.text, label.pos, color, buffers.text.data(), global.frame_size);
+                draw_text(label.text, label.pos, color, buffers.text.data(), state.globals.frame_size);
                 ++it;
             } else {
                 // Once we reach or exceed the final frame, draw at 100% opacity, then remove
-                draw_text(label.text, label.pos, 0xffffff, buffers.text.data(), global.frame_size);
+                draw_text(label.text, label.pos, 0xffffff, buffers.text.data(), state.globals.frame_size);
                 it = labels_being_drawn.erase(it);
             }
         }
@@ -1123,10 +1130,10 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 }
 
                 // The box to draw must be entirely on-screen
-                if (y < 0 || y >= global.frame_size.y ||
-                    x < 0 || x >= global.frame_size.x ||
-                    y + z - 1 < 0 || y + z - 1 >= global.frame_size.y ||
-                    x + z - 1 < 0 || x + z - 1 >= global.frame_size.x) {
+                if (y < 0 || y >= state.globals.frame_size.y ||
+                    x < 0 || x >= state.globals.frame_size.x ||
+                    y + z - 1 < 0 || y + z - 1 >= state.globals.frame_size.y ||
+                    x + z - 1 < 0 || x + z - 1 >= state.globals.frame_size.x) {
                     continue;
                 }
 
@@ -1144,7 +1151,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     update_image = true;
                     // Get the old color, in case we're only
                     // updating one of the color channels.
-                    image_color = buffers.image[global.frame_size.x * y + x];
+                    image_color = buffers.image[state.globals.frame_size.x * y + x];
 
                     double value = get_value_as<double>(p, lane);
 
@@ -1169,7 +1176,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 // Draw the pixel
                 for (int dy = 0; dy < fi.config.zoom; dy++) {
                     for (int dx = 0; dx < fi.config.zoom; dx++) {
-                        int px = global.frame_size.x * (y + dy) + x + dx;
+                        int px = state.globals.frame_size.x * (y + dy) + x + dx;
                         buffers.anim[px] = color;
                         if (update_image) {
                             buffers.image[px] = image_color;
@@ -1181,11 +1188,11 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         }
         case halide_trace_begin_realization:
             fi.stats.num_realizations++;
-            fill_realization(buffers.image.data(), global.frame_size, 0xff000000 | fi.config.uninitialized_memory_color, fi, p);
+            fill_realization(buffers.image.data(), state.globals.frame_size, 0xff000000 | fi.config.uninitialized_memory_color, fi, p);
             break;
         case halide_trace_end_realization:
             if (fi.config.blank_on_end_realization > 0) {
-                fill_realization(buffers.image.data(), global.frame_size, 0, fi, p);
+                fill_realization(buffers.image.data(), state.globals.frame_size, 0, fi, p);
             }
             break;
         case halide_trace_produce:
@@ -1208,12 +1215,12 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     }
 
     if (verbose) {
-        info() << "Total number of Funcs: " << func_info.size();
+        info() << "Total number of Funcs: " << state.funcs.size();
 
         // Dump this info at the end, since some is determined as we go
         std::ostringstream dumps;
-        global.dump(dumps);
-        for (const auto &p : func_info) {
+        state.globals.dump(dumps);
+        for (const auto &p : state.funcs) {
             const auto &fi = p.second;
             if (fi.type_and_dim_valid) {
                 fi.type_and_dim.dump(dumps, p.first);
@@ -1226,7 +1233,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
 
         // Print stats about the Func gleaned from the trace.
         vector<std::pair<std::string, FuncInfo> > funcs;
-        for (std::pair<std::string, FuncInfo> p : func_info) {
+        for (std::pair<std::string, FuncInfo> p : state.funcs) {
             funcs.push_back(p);
         }
         struct by_first_packet_idx {
@@ -1265,8 +1272,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    FlagProcessor flag_processor = [argc, argv](GlobalConfig &global, map<string, FuncInfo> &func_info) -> void {
-        process_args(argc, argv, global, func_info);
+    FlagProcessor flag_processor = [argc, argv](VizState *state) -> void {
+        process_args(argc, argv, state);
     };
 
     run(ignore_trace_tags, flag_processor);
