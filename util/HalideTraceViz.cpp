@@ -1,26 +1,18 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <map>
-#include <vector>
-#include <array>
-#include <string>
-#include <queue>
-#include <iostream>
 #include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <list>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
 #ifdef _MSC_VER
 #include <io.h>
-typedef int64_t ssize_t;
 #else
 #include <unistd.h>
 #endif
-#include <string>
-#include <list>
-#include <set>
-#include <cmath>
 
 #include "inconsolata.h"
 #include "HalideRuntime.h"
@@ -31,15 +23,6 @@ using namespace Halide;
 using namespace Halide::Trace;
 
 namespace {
-
-using std::map;
-using std::vector;
-using std::string;
-using std::queue;
-using std::array;
-using std::pair;
-using std::list;
-using std::set;
 
 bool verbose = false;
 
@@ -151,11 +134,11 @@ struct PacketAndPayload : public halide_trace_packet_t {
     uint8_t payload[4096];
 
     static bool read_or_die(void *buf, size_t count) {
-        ssize_t bytes_read_total = 0;
+        int64_t bytes_read_total = 0;
         char *p = (char *)buf;
         char *p_end = p + count;
         while (p < p_end) {
-            ssize_t bytes_read = ::read(STDIN_FILENO, p, p_end - p);
+            int64_t bytes_read = ::read(STDIN_FILENO, p, p_end - p);
             if (bytes_read == 0) {
                 return false;  // EOF
             } else if (bytes_read < 0) {
@@ -196,7 +179,7 @@ struct FuncInfo {
 
     // Information about actual observed values gathered while parsing the trace
     struct Observed {
-        string qualified_name;
+        std::string qualified_name;
         int first_draw_time = -1, first_packet_idx = -1;
         double min_value = 0.0, max_value = 0.0;
         int min_coord[16];
@@ -272,7 +255,7 @@ struct FuncInfo {
 
 struct VizState {
     GlobalConfig globals;
-    map<string, FuncInfo> funcs;
+    std::map<std::string, FuncInfo> funcs;
 };
 
 // Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst
@@ -343,7 +326,7 @@ line with something like:
 
 The arguments to HalideTraceViz specify how to lay out and render the
 Funcs of interest. It acts like a stateful drawing API. The following
-parameters should be set zero or one times:
+parameters should be std::set zero or one times:
 
  --size width height: The size of the output frames. Defaults to
      1920x1080.
@@ -365,7 +348,7 @@ parameters should be set zero or one times:
  --hold frames: How many frames to output after the end of the
     trace. Defaults to 250.
 
-The following parameters can be set once per Func. With the exception
+The following parameters can be std::set once per Func. With the exception
 of label, they continue to take effect for all subsequently defined
 Funcs.
 
@@ -378,7 +361,7 @@ Funcs.
 
  --gray: Render Funcs as grayscale.
 
- --blank: Specify that the output occupied by a Func should be set to
+ --blank: Specify that the output occupied by a Func should be std::set to
      black on its end-realization event.
 
  --no-blank: The opposite of --blank. Leaves the Func's values on the
@@ -394,18 +377,18 @@ Funcs.
  --move x y: Sets the position on the screen corresponding to the
    Func's 0, 0 coordinate.
 
- --left dx: Moves the currently set position leftward by the given
+ --left dx: Moves the currently std::set position leftward by the given
      amount.
 
- --right dx: Moves the currently set position rightward by the given
+ --right dx: Moves the currently std::set position rightward by the given
      amount.
 
- --up dy: Moves the currently set position upward by the given amount.
+ --up dy: Moves the currently std::set position upward by the given amount.
 
- --down dy: Moves the currently set position downward by the given
+ --down dy: Moves the currently std::set position downward by the given
      amount.
 
- --push: Copies the currently set position onto a stack of positions.
+ --push: Copies the currently std::set position onto a stack of positions.
 
  --pop: Sets the current position to the value most-recently pushed,
    and removes it from the stack.
@@ -420,7 +403,7 @@ Funcs.
  --uninit r g b : Specifies the on-screen color corresponding to
    uninitialized memory. Defaults to black.
 
- --func name: Mark a Func to be visualized. Uses the currently set
+ --func name: Mark a Func to be visualized. Uses the currently std::set
      values of the parameters above to specify how.
 
  --label func label n: When the named Func is first touched, the label
@@ -577,14 +560,14 @@ void finalize_func_config_values(FuncInfo &fi) {
 
 // Given a FuncConfig, check each field for "use some reasonable default"
 // value and fill in something reasonable.
-void finalize_func_config_values(map<string, FuncInfo> &funcs) {
+void finalize_func_config_values(std::map<std::string, FuncInfo> &funcs) {
     for (auto &p : funcs) {
         auto &fi = p.second;
         finalize_func_config_values(fi);
     }
 }
 
-void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &globals, const string &func_name, FuncInfo &fi) {
+void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &globals, const std::string &func_name, FuncInfo &fi) {
     if (fi.config_valid) {
         return;
     }
@@ -653,7 +636,7 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
     info() << "pos for " << func_name << " is " << fi.config.pos.x  << " " << fi.config.pos.y << "\n";
 
     if (fi.config.labels.empty()) {
-        string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
+        std::string label = func_name + " (" + std::to_string((int) (fi.config.zoom * 100)) + "%)";
         fi.config.labels.push_back({label, {0, 0}, 10});
     }
 
@@ -685,12 +668,12 @@ Point best_cell_size(int min_cells, int width, int height) {
 
 void process_args(int argc, char **argv, VizState *state) {
     GlobalConfig &globals = state->globals;
-    map<string, FuncInfo> &funcs = state->funcs;
+    std::map<std::string, FuncInfo> &funcs = state->funcs;
 
     // The struct's default values are what we want
     FuncConfig config;
-    vector<Point> pos_stack;
-    set<string> labels_seen;
+    std::vector<Point> pos_stack;
+    std::set<std::string> labels_seen;
 
     // If the condition is false, print usage and exit with error.
     const auto expect = [](bool cond, int i) {
@@ -706,7 +689,7 @@ void process_args(int argc, char **argv, VizState *state) {
     // Parse command line args
     int i = 1;
     while (i < argc) {
-        string next = argv[i];
+        std::string next = argv[i];
         if (next == "--size") {
             expect(i + 2 < argc, i);
             globals.frame_size.x = parse_int(argv[++i]);
@@ -788,7 +771,7 @@ void process_args(int argc, char **argv, VizState *state) {
             Point offset = { config.pos.x - fi.config.pos.x, config.pos.y - fi.config.pos.y };
             if (!labels_seen.count(func)) {
                 // If there is at least one --label specified for a Func,
-                // it overrides the entire previous set of labels, rather
+                // it overrides the entire previous std::set of labels, rather
                 // than simply appending.
                 fi.config.labels.clear();
                 labels_seen.insert(func);
@@ -805,7 +788,7 @@ void process_args(int argc, char **argv, VizState *state) {
             Point offset = { dx, dy };
             if (!labels_seen.count(func)) {
                 // If there is at least one --label specified for a Func,
-                // it overrides the entire previous set of labels, rather
+                // it overrides the entire previous std::set of labels, rather
                 // than simply appending.
                 fi.config.labels.clear();
                 labels_seen.insert(func);
@@ -878,14 +861,14 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     // we'll allocate once all tags and flags are processed
 
     struct PipelineInfo {
-        string name;
+        std::string name;
         int32_t id;
     };
 
-    map<uint32_t, PipelineInfo> pipeline_info;
+    std::map<uint32_t, PipelineInfo> pipeline_info;
 
     int func_appearance_order = 0;
-    list<pair<Label, int>> labels_being_drawn;
+    std::list<std::pair<Label, int>> labels_being_drawn;
     size_t end_counter = 0;
     size_t packet_clock = 0;
     for (;;) {
@@ -900,7 +883,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         if (halide_clock > video_clock) {
             assert(all_args_final);
 
-            const ssize_t frame_bytes = buffers.image.size() * sizeof(uint32_t);
+            const int64_t frame_bytes = buffers.image.size() * sizeof(uint32_t);
 
             while (halide_clock > video_clock) {
                 // Composite text over anim over image
@@ -924,7 +907,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 }
 
                 // Dump the frame
-                ssize_t bytes_written = write(STDOUT_FILENO, buffers.blend.data(), frame_bytes);
+                int64_t bytes_written = write(STDOUT_FILENO, buffers.blend.data(), frame_bytes);
                 if (bytes_written < frame_bytes) {
                     fail() << "Could not write frame to stdout.";
                 }
@@ -1035,7 +1018,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             pipeline_info.erase(p.parent_id);
         }
 
-        string qualified_name = pipeline.name + ":" + p.func();
+        std::string qualified_name = pipeline.name + ":" + p.func();
 
         if (state.funcs.find(qualified_name) == state.funcs.end()) {
             if (state.funcs.find(p.func()) != state.funcs.end()) {
@@ -1232,7 +1215,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         info() << dumps.str();
 
         // Print stats about the Func gleaned from the trace.
-        vector<std::pair<std::string, FuncInfo> > funcs;
+        std::vector<std::pair<std::string, FuncInfo> > funcs;
         for (std::pair<std::string, FuncInfo> p : state.funcs) {
             funcs.push_back(p);
         }
