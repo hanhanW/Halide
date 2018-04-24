@@ -24,13 +24,11 @@ typedef int64_t ssize_t;
 
 #include "inconsolata.h"
 #include "HalideRuntime.h"
-#include "HalideTraceUtils.h"
 
 #include "halide_trace_config.h"
 
 using namespace Halide;
 using namespace Halide::Trace;
-using namespace Internal;
 
 namespace {
 
@@ -42,6 +40,86 @@ using std::array;
 using std::pair;
 using std::list;
 using std::set;
+
+// Combine type-and-code into a single integer to avoid nested switches.
+// Must be constexpr to allow use in case clauses.
+inline static constexpr int halide_type_code(halide_type_code_t code, int bits) {
+    return (((int) code) << 8) | bits;
+}
+
+template<typename T>
+T value_as(const halide_type_t &type, const halide_scalar_value_t& value) {
+    switch (halide_type_code(type.code, type.bits)) {
+        case halide_type_code(halide_type_int, 8):    return (T) value.u.i8;
+        case halide_type_code(halide_type_int, 16):   return (T) value.u.i16;
+        case halide_type_code(halide_type_int, 32):   return (T) value.u.i32;
+        case halide_type_code(halide_type_int, 64):   return (T) value.u.i64;
+        case halide_type_code(halide_type_uint, 1):   return (T) value.u.b;
+        case halide_type_code(halide_type_uint, 8):   return (T) value.u.u8;
+        case halide_type_code(halide_type_uint, 16):  return (T) value.u.u16;
+        case halide_type_code(halide_type_uint, 32):  return (T) value.u.u32;
+        case halide_type_code(halide_type_uint, 64):  return (T) value.u.u64;
+        case halide_type_code(halide_type_float, 32): return (T) value.u.f32;
+        case halide_type_code(halide_type_float, 64): return (T) value.u.f64;
+        default:
+            fprintf(stderr, "Can't convert packet with type: %d bits: %d\n", (int) type.code, type.bits);
+            exit(-1);
+            return (T) 0;
+    }
+}
+
+template<typename T>
+T get_value_as(const halide_trace_packet_t &p, int idx) {
+    const uint8_t *val = (const uint8_t *)(p.value()) + idx * p.type.bytes();
+    // 'val' may not be aligned: memcpy it to an aligned local
+    // so that value_as<>() won't complain under sanitizers.
+    halide_scalar_value_t aligned_value;
+    // Only copy the number of bytes in the type: the stream isn't guaranteed
+    // to be padded to sizeof(halide_scalar_value_t).
+    memcpy(&aligned_value, val, p.type.bits / 8);
+    return value_as<double>(p.type, aligned_value);
+}
+
+struct PacketAndPayload : public halide_trace_packet_t {
+    uint8_t payload[4096];
+
+    static bool read_or_die(void *buf, size_t count) {
+        ssize_t bytes_read_total = 0;
+        char *p = (char *)buf;
+        char *p_end = p + count;
+        while (p < p_end) {
+            ssize_t bytes_read = ::read(STDIN_FILENO, p, p_end - p);
+            if (bytes_read == 0) {
+                return false;  // EOF
+            } else if (bytes_read < 0) {
+                fprintf(stderr, "Unable to read packet\n");
+                exit(1);
+            }
+            p += bytes_read;
+        }
+        assert(p == p_end);
+        return true;
+    }
+
+    bool read() {
+        constexpr size_t header_size = sizeof(halide_trace_packet_t);
+        if (!read_or_die(this, header_size)) {
+            return false;  // EOF
+        }
+
+        const size_t payload_size = this->size - header_size;
+        if (payload_size > sizeof(this->payload)) {
+            fprintf(stderr, "Payload larger than %d bytes in trace stream (%d)\n", (int)sizeof(this->payload), (int)payload_size);
+            exit(1);
+        }
+        if (!read_or_die(this->payload, payload_size)) {
+            // Shouldn't ever get EOF here
+            fprintf(stderr, "Unable to read packet payload\n");
+            exit(1);
+        }
+        return true;
+    }
+};
 
 // A struct specifying how a single Func will get visualized.
 struct FuncInfo {
@@ -70,20 +148,21 @@ struct FuncInfo {
             memset(max_coord, 0, sizeof(max_coord));
         }
 
-        void observe_load(const Packet &p) {
+        void observe_load(const halide_trace_packet_t &p) {
             observe_load_or_store(p);
             loads += p.type.lanes;
         }
 
-        void observe_store(const Packet &p) {
+        void observe_store(const halide_trace_packet_t &p) {
             observe_load_or_store(p);
             stores += p.type.lanes;
         }
 
-        void observe_load_or_store(const Packet &p) {
+        void observe_load_or_store(const halide_trace_packet_t &p) {
+            const int *coords = p.coordinates();
             for (int i = 0; i < std::min(16, p.dimensions / p.type.lanes); i++) {
                 for (int lane = 0; lane < p.type.lanes; lane++) {
-                    int coord = p.get_coord(i*p.type.lanes + lane);
+                    int coord = coords[i*p.type.lanes + lane];
                     if (loads + stores == 0 && lane == 0) {
                         min_coord[i] = coord;
                         max_coord[i] = coord + 1;
@@ -95,7 +174,7 @@ struct FuncInfo {
             }
 
             for (int i = 0; i < p.type.lanes; i++) {
-                double value = p.get_value_as<double>(i);
+                double value = get_value_as<double>(p, i);
                 if (stores + loads == 0) {
                     min_value = value;
                     max_value = value;
@@ -303,7 +382,7 @@ void expect(bool cond, int i) {
 // the given color. Recursive to handle arbitrary
 // dimensionalities. Used by begin and end realization events.
 void fill_realization(uint32_t *image, const Point &image_size, uint32_t color,
-                      const FuncInfo &fi, const Packet &p,
+                      const FuncInfo &fi, const halide_trace_packet_t &p,
                       int current_dimension = 0, int x_off = 0, int y_off = 0) {
     if (2 * current_dimension == p.dimensions) {
         int x_min = x_off * fi.config.zoom + fi.config.pos.x;
@@ -317,8 +396,9 @@ void fill_realization(uint32_t *image, const Point &image_size, uint32_t color,
             }
         }
     } else {
-        const int min = p.get_coord(current_dimension * 2 + 0);
-        const int extent = p.get_coord(current_dimension * 2 + 1);
+        const int *coords = p.coordinates();
+        const int min = coords[current_dimension * 2 + 0];
+        const int extent = coords[current_dimension * 2 + 1];
         // If we don't have enough strides, assume subsequent dimensions have stride (0, 0)
         const Point pt = current_dimension < fi.config.strides.size() ? fi.config.strides.at(current_dimension) : Point{0, 0};
         x_off += pt.x * min;
@@ -792,7 +872,7 @@ int run(int argc, char **argv) {
                 }
 
                 // Dump the frame
-                ssize_t bytes_written = write(1, buffers.blend.data(), frame_bytes);
+                ssize_t bytes_written = write(STDOUT_FILENO, buffers.blend.data(), frame_bytes);
                 if (bytes_written < frame_bytes) {
                     std::cerr << "Could not write frame to stdout.\n";
                     return -1;
@@ -812,8 +892,8 @@ int run(int argc, char **argv) {
         }
 
         // Read a tracing packet
-        Packet p;
-        if (!p.read_from_stdin()) {
+        PacketAndPayload p;
+        if (!p.read()) {
             end_counter++;
             continue;
         }
@@ -983,6 +1063,7 @@ int run(int argc, char **argv) {
             // if you don't specify them at all, they default to {{1,0},{0,1} (aka size=2).
             // So if we have excess strides, just ignore them.
             const int dims = std::min(p.dimensions/p.type.lanes, (int) fi.config.strides.size());
+            const int *coords = p.coordinates();
             for (int lane = 0; lane < p.type.lanes; lane++) {
                 // Compute the screen-space x, y coord to draw this.
                 int x = fi.config.pos.x;
@@ -991,7 +1072,7 @@ int run(int argc, char **argv) {
                 for (int d = 0; d < dims; d++) {
                     const int coord = d * p.type.lanes + lane;
                     assert(coord < p.dimensions);
-                    const int a = p.get_coord(coord);
+                    const int a = coords[coord];
                     const auto &stride = fi.config.strides[d];
                     x += z * stride.x * a;
                     y += z * stride.y * a;
@@ -1021,7 +1102,7 @@ int run(int argc, char **argv) {
                     // updating one of the color channels.
                     image_color = buffers.image[global.frame_size.x * y + x];
 
-                    double value = p.get_value_as<double>(lane);
+                    double value = get_value_as<double>(p, lane);
 
                     // Normalize it.
                     value = std::max(0.0, std::min(255.0, 255.0 * (value - fi.config.min) / (fi.config.max - fi.config.min)));
@@ -1034,7 +1115,7 @@ int run(int argc, char **argv) {
                         image_color = (int_value * 0x00010101) | 0xff000000;
                     } else {
                         // Color
-                        uint32_t channel = p.get_coord(fi.config.color_dim * p.type.lanes + lane);
+                        uint32_t channel = coords[fi.config.color_dim * p.type.lanes + lane];
                         uint32_t mask = ~(255 << (channel * 8));
                         image_color &= mask;
                         image_color |= int_value << (channel * 8);
