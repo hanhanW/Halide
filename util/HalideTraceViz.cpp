@@ -130,19 +130,24 @@ struct FuncInfo {
     } stats;
 };
 
-// Composite a single pixel of b over a single pixel of a, writing the result into dst
-void composite(uint8_t *a, uint8_t *b, uint8_t *dst) {
-    uint8_t alpha = b[3];
+// Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst
+void composite(const uint32_t *under, const uint32_t *over, uint32_t *dst) {
+    const uint32_t o = *over;
+    const uint8_t alpha = o >> 24;
     // alpha is almost always 0 or 255.
     if (alpha == 0) {
-        ((uint32_t *)dst)[0] = ((uint32_t *)a)[0];
+        *dst = *under;
     } else if (alpha == 255) {
-        ((uint32_t *)dst)[0] = ((uint32_t *)b)[0];
+        *dst = o;
     } else {
-        dst[0] = (alpha * b[0] + (255 - alpha) * a[0]) / 255;
-        dst[1] = (alpha * b[1] + (255 - alpha) * a[1]) / 255;
-        dst[2] = (alpha * b[2] + (255 - alpha) * a[2]) / 255;
-        dst[3] = 255 - (((255 - a[3]) * (255 - alpha)) / 255);
+        // TODO: this could be done using 64-bit ops more simply
+        uint8_t *a = (uint8_t*)under;
+        uint8_t *b = (uint8_t*)over;
+        uint8_t *d = (uint8_t*)dst;
+        d[0] = (alpha * b[0] + (255 - alpha) * a[0]) / 255;
+        d[1] = (alpha * b[1] + (255 - alpha) * a[1]) / 255;
+        d[2] = (alpha * b[2] + (255 - alpha) * a[2]) / 255;
+        d[3] = 255 - (((255 - a[3]) * (255 - alpha)) / 255);
     }
 }
 
@@ -767,18 +772,23 @@ int run(int argc, char **argv) {
 
             while (halide_clock > video_clock) {
                 // Composite text over anim over image
+                uint32_t *anim_decay_px  = buffers.anim_decay.data();
+                uint32_t *anim_px  = buffers.anim.data();
+                uint32_t *image_px = buffers.image.data();
+                uint32_t *text_px  = buffers.text.data();
+                uint32_t *blend_px = buffers.blend.data();
                 for (int i = 0; i < buffers.image.size(); i++) {
-                    uint8_t *anim_decay_px  = (uint8_t *)(buffers.anim_decay.data() + i);
-                    uint8_t *anim_px  = (uint8_t *)(buffers.anim.data() + i);
-                    uint8_t *image_px = (uint8_t *)(buffers.image.data() + i);
-                    uint8_t *text_px  = (uint8_t *)(buffers.text.data() + i);
-                    uint8_t *blend_px = (uint8_t *)(buffers.blend.data() + i);
                     // anim over anim_decay
                     composite(anim_decay_px, anim_px, anim_decay_px);
                     // anim_decay over image
                     composite(image_px, anim_decay_px, blend_px);
                     // text over image
                     composite(blend_px, text_px, blend_px);
+                    anim_decay_px++;
+                    anim_px++;
+                    image_px++;
+                    text_px++;
+                    blend_px++;
                 }
 
                 // Dump the frame
