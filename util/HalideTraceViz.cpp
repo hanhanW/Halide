@@ -24,6 +24,8 @@ using namespace Halide::Trace;
 
 namespace {
 
+// -------------------------------------------------------------
+
 bool verbose = false;
 
 // Log informational output to stderr, but only in verbose mode
@@ -91,6 +93,8 @@ struct fail {
     #pragma warning(pop)
     #endif
 };
+
+// -------------------------------------------------------------
 
 // Combine type-and-code into a single integer to avoid nested switches.
 // Must be constexpr to allow use in case clauses.
@@ -164,6 +168,8 @@ struct PacketAndPayload : public halide_trace_packet_t {
         return true;
     }
 };
+
+// -------------------------------------------------------------
 
 // A struct specifying how a single Func will get visualized.
 struct FuncInfo {
@@ -258,53 +264,10 @@ struct VizState {
     std::map<std::string, FuncInfo> funcs;
 };
 
-// Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst
-void composite(const uint32_t *under, const uint32_t *over, uint32_t *dst) {
-    const uint32_t o = *over;
-    const uint8_t alpha = o >> 24;
-    // alpha is almost always 0 or 255.
-    if (alpha == 0) {
-        *dst = *under;
-    } else if (alpha == 255) {
-        *dst = o;
-    } else {
-        // TODO: this could be done using 64-bit ops more simply
-        uint8_t *a = (uint8_t*)under;
-        uint8_t *b = (uint8_t*)over;
-        uint8_t *d = (uint8_t*)dst;
-        d[0] = (alpha * b[0] + (255 - alpha) * a[0]) / 255;
-        d[1] = (alpha * b[1] + (255 - alpha) * a[1]) / 255;
-        d[2] = (alpha * b[2] + (255 - alpha) * a[2]) / 255;
-        d[3] = 255 - (((255 - a[3]) * (255 - alpha)) / 255);
-    }
-}
+// -------------------------------------------------------------
 
-void draw_text(const std::string &text, const Point &pos, uint32_t color, uint32_t *dst, const Point &dst_size) {
-    // Drop any alpha component of color
-    color &= 0xffffff;
 
-    int c = -1;
-    for (int chr : text) {
-        ++c;
-
-        // We only handle a subset of ascii
-        if (chr < 32 || chr >= 32 + inconsolata_char_count) {
-            chr = 32;
-        }
-        chr -= 32;
-
-        const uint8_t *font_ptr = inconsolata_raw + chr * (inconsolata_char_width * inconsolata_char_height);
-        for (int fy = 0; fy < inconsolata_char_height; fy++) {
-            for (int fx = 0; fx < inconsolata_char_width; fx++) {
-                int px = pos.x + inconsolata_char_width*c + fx;
-                int py = pos.y - inconsolata_char_height + fy + 1;
-                if (px < 0 || px >= dst_size.x ||
-                    py < 0 || py >= dst_size.y) continue;
-                dst[py * dst_size.x + px] = (font_ptr[fy * inconsolata_char_width + fx] << 24) | color;
-            }
-        }
-    }
-}
+// -------------------------------------------------------------
 
 std::string usage() {
     return
@@ -416,39 +379,6 @@ Funcs.
 ))USAGE";
 }
 
-// Set all boxes corresponding to positions in a Func's allocation to
-// the given color. Recursive to handle arbitrary
-// dimensionalities. Used by begin and end realization events.
-void fill_realization(uint32_t *image, const Point &image_size, uint32_t color,
-                      const FuncInfo &fi, const halide_trace_packet_t &p,
-                      int current_dimension = 0, int x_off = 0, int y_off = 0) {
-    if (2 * current_dimension == p.dimensions) {
-        int x_min = x_off * fi.config.zoom + fi.config.pos.x;
-        int y_min = y_off * fi.config.zoom + fi.config.pos.y;
-        for (int y = 0; y < fi.config.zoom; y++) {
-            if (y_min + y < 0 || y_min + y >= image_size.y) continue;
-            for (int x = 0; x < fi.config.zoom; x++) {
-                if (x_min + x < 0 || x_min + x >= image_size.x) continue;
-                int idx = (y_min + y) * image_size.x + (x_min + x);
-                image[idx] = color;
-            }
-        }
-    } else {
-        const int *coords = p.coordinates();
-        const int min = coords[current_dimension * 2 + 0];
-        const int extent = coords[current_dimension * 2 + 1];
-        // If we don't have enough strides, assume subsequent dimensions have stride (0, 0)
-        const Point pt = current_dimension < fi.config.strides.size() ? fi.config.strides.at(current_dimension) : Point{0, 0};
-        x_off += pt.x * min;
-        y_off += pt.y * min;
-        for (int i = 0; i < extent; i++) {
-            fill_realization(image, image_size, color, fi, p, current_dimension + 1, x_off, y_off);
-            x_off += pt.x;
-            y_off += pt.y;
-        }
-    }
-}
-
 // Calculate the maximum 2d rendered size for a given Box and stride, assuming
 // a zoom factor of 1. This uses the same recursive approach as fill_realization()
 // for simplicity.
@@ -474,49 +404,7 @@ void calc_2d_size(const std::vector<Range> &dims, const std::vector<Point> &stri
     }
 }
 
-int parse_int(const char *str) {
-    char *endptr = nullptr;
-    errno = 0;
-    long result = strtol(str, &endptr, 0);
-    if (errno == ERANGE || str == endptr) {
-        fail() << "Unable to parse '" << str << "' as an int\n" << usage();
-    }
-    return (int) result;
-}
-
-float parse_float(const char *str) {
-    char *endptr = nullptr;
-    errno = 0;
-    float result = strtof(str, &endptr);
-    if (errno == ERANGE || str == endptr) {
-        fail() << "Unable to parse '" << str << "' as a float\n" << usage();
-    }
-    return result;
-}
-
-double parse_double(const char *str) {
-    char *endptr = nullptr;
-    errno = 0;
-    double result = strtod(str, &endptr);
-    if (errno == ERANGE || str == endptr) {
-        fail() << "Unable to parse '" << str << "' as a double\n" << usage();
-    }
-    return result;
-}
-
-void do_decay(int decay_factor, std::vector<uint32_t> &storage) {
-    if (decay_factor != 1) {
-        const uint32_t inv_d1 = (1 << 24) / std::max(1, decay_factor);
-        for (size_t i = 0; i < storage.size(); i++) {
-            uint32_t color = storage[i];
-            uint32_t rgb = color & 0x00ffffff;
-            uint32_t alpha = (color >> 24);
-            alpha *= inv_d1;
-            alpha &= 0xff000000;
-            storage[i] = alpha | rgb;
-        }
-    }
-}
+// -------------------------------------------------------------
 
 // Given a FuncConfig, check each field for "use some reasonable default"
 // value and fill in something reasonable.
@@ -666,6 +554,8 @@ Point best_cell_size(int min_cells, int width, int height) {
     return {edge, edge};
 }
 
+// -------------------------------------------------------------
+
 void process_args(int argc, char **argv, VizState *state) {
     GlobalConfig &globals = state->globals;
     std::map<std::string, FuncInfo> &funcs = state->funcs;
@@ -684,6 +574,36 @@ void process_args(int argc, char **argv, VizState *state) {
                 fail() << usage();
             }
         }
+    };
+
+    const auto parse_int = [](const char *str) -> int {
+        char *endptr = nullptr;
+        errno = 0;
+        long result = strtol(str, &endptr, 0);
+        if (errno == ERANGE || str == endptr) {
+            fail() << "Unable to parse '" << str << "' as an int\n" << usage();
+        }
+        return (int) result;
+    };
+
+    const auto parse_float = [](const char *str) -> float {
+        char *endptr = nullptr;
+        errno = 0;
+        float result = strtof(str, &endptr);
+        if (errno == ERANGE || str == endptr) {
+            fail() << "Unable to parse '" << str << "' as a float\n" << usage();
+        }
+        return result;
+    };
+
+    const auto parse_double = [](const char *str) -> double {
+        char *endptr = nullptr;
+        errno = 0;
+        double result = strtod(str, &endptr);
+        if (errno == ERANGE || str == endptr) {
+            fail() << "Unable to parse '" << str << "' as a double\n" << usage();
+        }
+        return result;
     };
 
     // Parse command line args
@@ -829,6 +749,197 @@ void process_args(int argc, char **argv, VizState *state) {
     }
 }
 
+// There are three layers - image data, an animation on top of
+// it, and text labels. These layers get composited.
+struct Buffers {
+    std::vector<uint32_t> image, anim, anim_decay, text_buf, blend;
+    Point frame_size;
+    bool inited = false;
+
+    // Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst.
+    // Note that under or over might be dst.
+    static void composite_one(const uint32_t *under, const uint32_t *over, uint32_t *dst) {
+        const uint32_t o = *over;
+        const uint8_t alpha = o >> 24;
+        // alpha is almost always 0 or 255.
+        if (alpha == 0) {
+            *dst = *under;
+        } else if (alpha == 255) {
+            *dst = o;
+        } else {
+            // TODO: this could be done using 64-bit ops more simply
+            uint8_t *a = (uint8_t*)under;
+            uint8_t *b = (uint8_t*)over;
+            uint8_t *d = (uint8_t*)dst;
+            d[0] = (alpha * b[0] + (255 - alpha) * a[0]) / 255;
+            d[1] = (alpha * b[1] + (255 - alpha) * a[1]) / 255;
+            d[2] = (alpha * b[2] + (255 - alpha) * a[2]) / 255;
+            d[3] = 255 - (((255 - a[3]) * (255 - alpha)) / 255);
+        }
+    }
+
+    void do_decay(int decay_factor, uint32_t *dst) {
+        if (decay_factor != 1) {
+            const uint32_t inv_d1 = (1 << 24) / std::max(1, decay_factor);
+            for (uint32_t *dst_end = dst + frame_elems(); dst < dst_end; ++dst) {
+                uint32_t color = *dst;
+                uint32_t rgb = color & 0x00ffffff;
+                uint32_t alpha = (color >> 24);
+                alpha *= inv_d1;
+                alpha &= 0xff000000;
+                *dst = alpha | rgb;
+            }
+        }
+    }
+
+    void do_draw_pixel(const float zoom, const int x, const int y, const uint32_t color, uint32_t *dst) {
+        const int izoom = (int) ceil(zoom);
+        const int y_advance = frame_size.x - izoom;
+        dst += frame_size.x * y + x;
+        for (int dy = 0; dy < izoom; dy++) {
+            for (int dx = 0; dx < izoom; dx++) {
+                *dst++ = color;
+            }
+            dst += y_advance;
+        }
+    }
+
+    // Set all boxes corresponding to positions in a Func's allocation to
+    // the given color. Recursive to handle arbitrary
+    // dimensionalities. Used by begin and end realization events.
+    void do_fill_realization(uint32_t *dst, uint32_t color,
+                          const FuncInfo &fi, const halide_trace_packet_t &p,
+                          int current_dimension = 0, int x_off = 0, int y_off = 0) {
+        if (2 * current_dimension == p.dimensions) {
+            const int x_min = x_off * fi.config.zoom + fi.config.pos.x;
+            const int y_min = y_off * fi.config.zoom + fi.config.pos.y;
+            const int izoom = (int) ceil(fi.config.zoom);
+            for (int y = 0; y < izoom; y++) {
+                if (y_min + y < 0 || y_min + y >= frame_size.y) continue;
+                for (int x = 0; x < izoom; x++) {
+                    if (x_min + x < 0 || x_min + x >= frame_size.x) continue;
+                    int idx = (y_min + y) * frame_size.x + (x_min + x);
+                    dst[idx] = color;
+                }
+            }
+        } else {
+            const int *coords = p.coordinates();
+            const int min = coords[current_dimension * 2 + 0];
+            const int extent = coords[current_dimension * 2 + 1];
+            // If we don't have enough strides, assume subsequent dimensions have stride (0, 0)
+            const Point pt = current_dimension < fi.config.strides.size() ? fi.config.strides.at(current_dimension) : Point{0, 0};
+            x_off += pt.x * min;
+            y_off += pt.y * min;
+            for (int i = 0; i < extent; i++) {
+                do_fill_realization(dst, color, fi, p, current_dimension + 1, x_off, y_off);
+                x_off += pt.x;
+                y_off += pt.y;
+            }
+        }
+    }
+
+
+public:
+    void init(const Point &fs) {
+        assert(!inited);
+        frame_size = fs;
+        image.resize(frame_elems());
+        anim.resize(frame_elems());
+        anim_decay.resize(frame_elems());
+        text_buf.resize(frame_elems());
+        blend.resize(frame_elems());
+        inited = true;
+    }
+
+    size_t frame_elems() const {
+        return frame_size.x * frame_size.y;
+    }
+
+    const uint32_t *frame_data() const {
+        return this->blend.data();
+    }
+
+    uint32_t get_image_pixel(const int x, const int y) const {
+        return image[frame_size.x * y + x];
+    }
+
+    void draw_text(const std::string &text, const Point &pos, uint32_t color) {
+        uint32_t *dst = text_buf.data();
+
+        // Drop any alpha component of color
+        color &= 0xffffff;
+
+        int c = -1;
+        for (int chr : text) {
+            ++c;
+
+            // We only handle a subset of ascii
+            if (chr < 32 || chr >= 32 + inconsolata_char_count) {
+                chr = 32;
+            }
+            chr -= 32;
+
+            const uint8_t *font_ptr = inconsolata_raw + chr * (inconsolata_char_width * inconsolata_char_height);
+            for (int fy = 0; fy < inconsolata_char_height; fy++) {
+                for (int fx = 0; fx < inconsolata_char_width; fx++) {
+                    int px = pos.x + inconsolata_char_width*c + fx;
+                    int py = pos.y - inconsolata_char_height + fy + 1;
+                    if (px < 0 || px >= frame_size.x ||
+                        py < 0 || py >= frame_size.y) continue;
+                    dst[py * frame_size.x + px] = (font_ptr[fy * inconsolata_char_width + fx] << 24) | color;
+                }
+            }
+        }
+    }
+
+    void draw_anim_pixel(const float zoom, int x, int y, uint32_t color) {
+        do_draw_pixel(zoom, x, y, color, anim.data());
+    }
+
+    void draw_image_pixel(const float zoom, int x, int y, uint32_t color) {
+        do_draw_pixel(zoom, x, y, color, image.data());
+    }
+
+    void fill_realization(uint32_t color, const FuncInfo &fi, const halide_trace_packet_t &p) {
+        do_fill_realization(image.data(), color, fi, p);
+    }
+
+    void composite() {
+        // Composite text over anim over image
+        uint32_t *anim_decay_px  = anim_decay.data();
+        uint32_t *anim_px  = anim.data();
+        uint32_t *image_px = image.data();
+        uint32_t *text_px  = text_buf.data();
+        uint32_t *blend_px = blend.data();
+        for (int i = 0; i < image.size(); i++) {
+            // anim over anim_decay -> anim_decay
+            composite_one(anim_decay_px, anim_px, anim_decay_px);
+            // anim_decay over image -> blend
+            composite_one(image_px, anim_decay_px, blend_px);
+            // text over blend -> blend
+            composite_one(blend_px, text_px, blend_px);
+            anim_decay_px++;
+            anim_px++;
+            image_px++;
+            text_px++;
+            blend_px++;
+        }
+    }
+
+    void decay_animations(int decay_factor_after_compute, int decay_factor_during_compute) {
+        // Decay the anim_decay
+        do_decay(decay_factor_after_compute, anim_decay.data());
+
+        // Also decay the anim
+        do_decay(decay_factor_during_compute, anim.data());
+    }
+
+    void clear_animations() {
+        std::fill(anim.begin(), anim.end(), 0);
+    }
+};
+
+
 using FlagProcessor = std::function<void(VizState *state)>;
 
 int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
@@ -842,20 +953,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     bool all_args_final = false;
     bool seen_global_config_tag = false;
 
-    // There are three layers - image data, an animation on top of
-    // it, and text labels. These layers get composited.
-    struct Buffers {
-        std::vector<uint32_t> image, anim, anim_decay, text, blend;
-
-        void resize(const Point &frame_size) {
-            const int frame_elems = frame_size.x * frame_size.y;
-            image.resize(frame_elems, 0);
-            anim.resize(frame_elems, 0);
-            anim_decay.resize(frame_elems, 0);
-            text.resize(frame_elems, 0);
-            blend.resize(frame_elems, 0);
-        }
-    } buffers;
+    Buffers buffers;
 
     // Leave buffers unallocated for now;
     // we'll allocate once all tags and flags are processed
@@ -883,46 +981,25 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         if (halide_clock > video_clock) {
             assert(all_args_final);
 
-            const int64_t frame_bytes = buffers.image.size() * sizeof(uint32_t);
+            const int64_t frame_bytes = buffers.frame_elems() * sizeof(uint32_t);
 
             while (halide_clock > video_clock) {
                 // Composite text over anim over image
-                uint32_t *anim_decay_px  = buffers.anim_decay.data();
-                uint32_t *anim_px  = buffers.anim.data();
-                uint32_t *image_px = buffers.image.data();
-                uint32_t *text_px  = buffers.text.data();
-                uint32_t *blend_px = buffers.blend.data();
-                for (int i = 0; i < buffers.image.size(); i++) {
-                    // anim over anim_decay
-                    composite(anim_decay_px, anim_px, anim_decay_px);
-                    // anim_decay over image
-                    composite(image_px, anim_decay_px, blend_px);
-                    // text over image
-                    composite(blend_px, text_px, blend_px);
-                    anim_decay_px++;
-                    anim_px++;
-                    image_px++;
-                    text_px++;
-                    blend_px++;
-                }
+                buffers.composite();
 
                 // Dump the frame
-                int64_t bytes_written = write(STDOUT_FILENO, buffers.blend.data(), frame_bytes);
+                int64_t bytes_written = write(STDOUT_FILENO, buffers.frame_data(), frame_bytes);
                 if (bytes_written < frame_bytes) {
                     fail() << "Could not write frame to stdout.";
                 }
 
                 video_clock += state.globals.timestep;
 
-                // Decay the anim_decay
-                do_decay(state.globals.decay_factor_after_compute, buffers.anim_decay);
-
-                // Also decay the anim
-                do_decay(state.globals.decay_factor_during_compute, buffers.anim);
+                buffers.decay_animations(state.globals.decay_factor_after_compute, state.globals.decay_factor_during_compute);
             }
 
             // Blank anim
-            std::fill(buffers.anim.begin(), buffers.anim.end(), 0);
+            buffers.clear_animations();
         }
 
         // Read a tracing packet
@@ -987,7 +1064,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             flag_processor(&state);
 
             // allocate the buffers after all tags and flags are processed
-            buffers.resize(state.globals.frame_size);
+            buffers.init(state.globals.frame_size);
 
             if (state.globals.auto_layout_grid.x < 0 || state.globals.auto_layout_grid.y < 0) {
                 int cells_needed = 0;
@@ -1068,11 +1145,11 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 uint32_t color = ((1 + frames_since_first_draw) * 255) / std::max(1, label.fade_in_frames);
                 if (color > 255) color = 255;
                 color *= 0x10101;
-                draw_text(label.text, label.pos, color, buffers.text.data(), state.globals.frame_size);
+                buffers.draw_text(label.text, label.pos, color);
                 ++it;
             } else {
                 // Once we reach or exceed the final frame, draw at 100% opacity, then remove
-                draw_text(label.text, label.pos, 0xffffff, buffers.text.data(), state.globals.frame_size);
+                buffers.draw_text(label.text, label.pos, 0xffffff);
                 it = labels_being_drawn.erase(it);
             }
         }
@@ -1120,26 +1197,18 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     continue;
                 }
 
-                // Stores are orange, loads are blue.
-                uint32_t color = p.event == halide_trace_load ? 0xffffdd44 : 0xff44ddff;
-
-                uint32_t image_color;
-                bool update_image = false;
-
                 // Update one or more of the color channels of the
                 // image layer in case it's a store or a load from
                 // the input.
-                if (p.event == halide_trace_store ||
-                    fi.stats.num_realizations == 0 /* load from an input */) {
-                    update_image = true;
+                if (p.event == halide_trace_store || fi.stats.num_realizations == 0 /* load from an input */) {
                     // Get the old color, in case we're only
                     // updating one of the color channels.
-                    image_color = buffers.image[state.globals.frame_size.x * y + x];
-
+                    uint32_t image_color = buffers.get_image_pixel(x, y);
                     double value = get_value_as<double>(p, lane);
 
                     // Normalize it.
-                    value = std::max(0.0, std::min(255.0, 255.0 * (value - fi.config.min) / (fi.config.max - fi.config.min)));
+                    value = std::max(0.0, std::min(255.0, 255.0 * (value - fi.config.min) /
+                                                          (fi.config.max - fi.config.min)));
 
                     // Convert to 8-bit color.
                     uint8_t int_value = (uint8_t)value;
@@ -1154,28 +1223,22 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                         image_color &= mask;
                         image_color |= int_value << (channel * 8);
                     }
+                    buffers.draw_image_pixel(fi.config.zoom, x, y, image_color);
                 }
 
-                // Draw the pixel
-                for (int dy = 0; dy < fi.config.zoom; dy++) {
-                    for (int dx = 0; dx < fi.config.zoom; dx++) {
-                        int px = state.globals.frame_size.x * (y + dy) + x + dx;
-                        buffers.anim[px] = color;
-                        if (update_image) {
-                            buffers.image[px] = image_color;
-                        }
-                    }
-                }
+                // Stores are orange, loads are blue.
+                uint32_t color = p.event == halide_trace_load ? 0xffffdd44 : 0xff44ddff;
+                buffers.draw_anim_pixel(fi.config.zoom, x, y, color);
             }
             break;
         }
         case halide_trace_begin_realization:
             fi.stats.num_realizations++;
-            fill_realization(buffers.image.data(), state.globals.frame_size, 0xff000000 | fi.config.uninitialized_memory_color, fi, p);
+            buffers.fill_realization(0xff000000 | fi.config.uninitialized_memory_color, fi, p);
             break;
         case halide_trace_end_realization:
             if (fi.config.blank_on_end_realization > 0) {
-                fill_realization(buffers.image.data(), state.globals.frame_size, 0, fi, p);
+                buffers.fill_realization(0, fi, p);
             }
             break;
         case halide_trace_produce:
