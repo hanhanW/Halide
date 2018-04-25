@@ -1058,6 +1058,17 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         if (!all_args_final) {
             all_args_final = true;
 
+            if (verbose) {
+                std::ostringstream dumps;
+                for (const auto &p : state.funcs) {
+                    const auto &fi = p.second;
+                    if (fi.type_and_dim_valid) {
+                        fi.type_and_dim.dump(dumps, p.first);
+                    }
+                }
+                info() << dumps.str();
+            }
+
             // We wait until now to process the cmd-line args;
             // this allows us to override trace-tag specifications
             // via the commandline, which is handy for experimentations.
@@ -1268,9 +1279,6 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         state.globals.dump(dumps);
         for (const auto &p : state.funcs) {
             const auto &fi = p.second;
-            if (fi.type_and_dim_valid) {
-                fi.type_and_dim.dump(dumps, p.first);
-            }
             if (fi.config_valid) {
                 fi.config.dump(dumps, p.first);
             }
