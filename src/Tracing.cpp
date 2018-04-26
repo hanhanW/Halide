@@ -3,6 +3,7 @@
 #include "IROperator.h"
 #include "runtime/HalideRuntime.h"
 #include "Bounds.h"
+#include "RealizationOrder.h"
 
 namespace Halide {
 namespace Internal {
@@ -377,8 +378,10 @@ Stmt inject_tracing(Stmt s, const string &pipeline_name,
 
         builder.event = halide_trace_tag;
 
+        vector<string> order = topological_order(outputs, env);
+
         // Compute boxes_touched and send a func_type_and_dim trace-tag for
-        // everything that we actually touched, in alphabetical order by func name.
+        // everything that we actually touched, in topological order.
         // We include the type(s) of each Func (could be multiple for Tuple-valued
         // Funcs), and the dimensions and guess-at-ranges-rouched. Note that the
         // dimensions should be exact, but the ranges-touched is a conservative estimate;
@@ -388,9 +391,17 @@ Stmt inject_tracing(Stmt s, const string &pipeline_name,
         Expr space = Expr(" ");
 
         std::map<std::string, Box> bt = boxes_touched(s);
-        for (const auto &p : tracing.funcs_touched) {
-            const string &func_name = p.first;
-            const vector<Type> &func_types = p.second;
+        for (auto topo_it = order.rbegin(); topo_it != order.rend(); ++topo_it) {
+            const string &o = *topo_it;
+            auto p = tracing.funcs_touched.find(*topo_it);
+            if (p == tracing.funcs_touched.end() && ends_with(o, "_im")) {
+                p = tracing.funcs_touched.find(o.substr(0, o.size() - 3));
+            }
+            if (p == tracing.funcs_touched.end()) {
+                continue;
+            }
+            const string &func_name = p->first;
+            const vector<Type> &func_types = p->second;
             builder.func = func_name;
 
             vector<Expr> strings;
