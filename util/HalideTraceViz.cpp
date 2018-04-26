@@ -178,6 +178,7 @@ struct FuncInfo {
     // by the tracing code.
     FuncTypeAndDim type_and_dim;
     bool type_and_dim_valid = false;
+    int layout_order = -1;
 
     // Configuration for how the func should be drawn
     FuncConfig config;
@@ -382,25 +383,29 @@ Funcs.
 // Calculate the maximum 2d rendered size for a given Box and stride, assuming
 // a zoom factor of 1. This uses the same recursive approach as fill_realization()
 // for simplicity.
-void calc_2d_size(const std::vector<Range> &dims, const std::vector<Point> &strides, Point *size,
+void calc_2d_size(const std::vector<Range> &dims, const std::vector<Point> &strides, Range *x, Range *y,
                       int current_dimension = 0, int x_off = 0, int y_off = 0) {
     if (current_dimension == dims.size()) {
-        size->x = std::max(size->x, x_off);
-        size->y = std::max(size->y, y_off);
+        x->min = std::min(x->min, x_off);
+        x->extent = std::max(x->extent, x_off);
+        y->min = std::min(y->min, y_off);
+        y->extent = std::max(y->extent, y_off);
     } else {
         const auto &m = dims.at(current_dimension);
         const Point &stride = strides.at(current_dimension);
         x_off += stride.x * m.min;
         y_off += stride.y * m.min;
         for (int i = 0; i < m.extent; i++) {
-            calc_2d_size(dims, strides, size, current_dimension + 1, x_off, y_off);
+            calc_2d_size(dims, strides, x, y, current_dimension + 1, x_off, y_off);
             x_off += stride.x;
             y_off += stride.y;
         }
     }
     if (current_dimension == 0) {
-        if (size->x < 1) size->x = 1;
-        if (size->y < 1) size->y = 1;
+        x->extent -= x->min;
+        y->extent -= y->min;
+        if (x->extent < 1) x->extent = 1;
+        if (y->extent < 1) y->extent = 1;
     }
 }
 
@@ -455,10 +460,12 @@ void finalize_func_config_values(std::map<std::string, FuncInfo> &funcs) {
     }
 }
 
-void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &globals, const std::string &func_name, FuncInfo &fi) {
+void auto_layout_if_needed(int layout_order, const GlobalConfig &globals, const std::string &func_name, FuncInfo &fi) {
     if (fi.config_valid) {
         return;
     }
+
+    assert(fi.type_and_dim_valid);
 
     const Point &pad = globals.auto_layout_pad;
     Point cell_size = {
@@ -466,10 +473,10 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
         globals.frame_size.y / globals.auto_layout_grid.y
     };
 
-    int row = func_appearance_order / globals.auto_layout_grid.x;
-    int col = func_appearance_order % globals.auto_layout_grid.x;
+    int row = layout_order / globals.auto_layout_grid.x;
+    int col = layout_order % globals.auto_layout_grid.x;
 
-    if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
+    if (fi.config.color_dim < -1) {
         // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
         const auto &dims = fi.type_and_dim.dims;
         if (dims.size() == 3) {
@@ -484,7 +491,7 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
         }
     }
 
-    if (fi.config.zoom < 0.f && fi.type_and_dim_valid) {
+    if (fi.config.zoom < 0.f) {
         // Ensure that all of the FuncInfos have strides that match
         // the number of dimensions expected by FuncTypeAndDim, adding
         // zero-stride pairs as needed (this simplifies rendering checks
@@ -497,14 +504,14 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
         }
 
         // Calc the 2d size that this would render at (including stride-stretching) for zoom=1
-        Point size;
-        calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &size);
-        info() << "calc_2d_size for " << func_name << " is " << size.x << "x" << size.y << "\n";
+        Range xr, yr;
+        calc_2d_size(fi.type_and_dim.dims, fi.config.strides, &xr, &yr);
+        info() << "calc_2d_size for " << func_name << " is " << xr << ", " << yr << "\n";
 
         // Use that size to calculate the zoom we need -- this chooses
         // a zoom that maximizes the size within the cell.
-        float zoom_x = (float) (cell_size.x - pad.x) / (float) size.x;
-        float zoom_y = (float) (cell_size.y - pad.y) / (float) size.y;
+        float zoom_x = (float) (cell_size.x - pad.x) / (float) xr.extent;
+        float zoom_y = (float) (cell_size.y - pad.y) / (float) yr.extent;
         fi.config.zoom = std::min(zoom_x, zoom_y);
         info() << "zoom for " << func_name << " is " << zoom_x  << " " << zoom_y << "\n";
 
@@ -910,7 +917,7 @@ public:
     }
 
     void fill_realization(uint32_t color, const FuncInfo &fi, const halide_trace_packet_t &p) {
-        // TODO: horrible hack to work about tracing data format bug, fix upstream
+        // TODO: horrible hack to work around tracing data format bug, fix upstream
         if (p.type.lanes > 1) return;
         do_fill_realization(image.data(), color, fi, p);
     }
@@ -973,10 +980,9 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         std::string name;
         int32_t id;
     };
-
     std::map<uint32_t, PipelineInfo> pipeline_info;
 
-    int func_appearance_order = 0;
+    int layout_order = 0;
     std::list<std::pair<Label, int>> labels_being_drawn;
     size_t end_counter = 0;
     size_t packet_clock = 0;
@@ -1046,8 +1052,9 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     continue;
                 }
                 FuncConfig cfg(p.trace_tag());
-                state.funcs[p.func()].config = cfg;
-                state.funcs[p.func()].config_valid = true;
+                auto &fi = state.funcs[p.func()];
+                fi.config = cfg;
+                fi.config_valid = true;
             } else if (GlobalConfig::match(p.trace_tag())) {
                 if (ignore_trace_tags) {
                     continue;
@@ -1058,8 +1065,10 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 state.globals = GlobalConfig(p.trace_tag());
                 seen_global_config_tag = true;
             } else if (FuncTypeAndDim::match(p.trace_tag())) {
-                state.funcs[p.func()].type_and_dim = FuncTypeAndDim(p.trace_tag());
-                state.funcs[p.func()].type_and_dim_valid = true;
+                auto &fi = state.funcs[p.func()];
+                fi.type_and_dim = FuncTypeAndDim(p.trace_tag());
+                fi.type_and_dim_valid = true;
+                fi.layout_order = layout_order++;
             } else {
                 warn() << "Ignoring trace_tag: (" << p.trace_tag() << ") for func (" << p.func() << ")";
             }
@@ -1073,9 +1082,8 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 std::ostringstream dumps;
                 for (const auto &p : state.funcs) {
                     const auto &fi = p.second;
-                    if (fi.type_and_dim_valid) {
-                        fi.type_and_dim.dump(dumps, p.first);
-                    }
+                    assert(fi.type_and_dim_valid);
+                    fi.type_and_dim.dump(dumps, p.first);
                 }
                 info() << dumps.str();
             }
@@ -1103,7 +1111,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             }
         }
 
-        PipelineInfo pipeline = pipeline_info[p.parent_id];
+        const PipelineInfo pipeline = pipeline_info[p.parent_id];
 
         if (p.event == halide_trace_begin_realization ||
             p.event == halide_trace_produce ||
@@ -1124,7 +1132,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 state.funcs[qualified_name] = state.funcs[p.func()];
                 state.funcs.erase(p.func());
             } else {
-                warn() << "Warning: ignoring func " << qualified_name << " event " << p.event <<
+                warn() << "ignoring func " << qualified_name << " event " << p.event <<
                           "; parent event " << p.parent_id << " " << pipeline.name;
             }
         }
@@ -1136,7 +1144,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             fi.stats.first_draw_time = halide_clock;
 
             if (state.globals.auto_layout) {
-                auto_layout_if_needed(func_appearance_order++, state.globals, p.func(), fi);
+                auto_layout_if_needed(fi.layout_order, state.globals, p.func(), fi);
             }
             finalize_func_config_values(fi);
 
@@ -1153,27 +1161,9 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         // could change the value
         if (!fi.config_valid) continue;
 
-
         if (fi.stats.first_packet_idx < 0) {
             fi.stats.first_packet_idx = packet_clock;
             fi.stats.qualified_name = qualified_name;
-        }
-
-        for (auto it = labels_being_drawn.begin(); it != labels_being_drawn.end(); ) {
-            const Label &label = it->first;
-            int first_draw_clock = it->second;
-            int frames_since_first_draw = (halide_clock - first_draw_clock) / state.globals.timestep;
-            if (frames_since_first_draw < label.fade_in_frames) {
-                uint32_t color = ((1 + frames_since_first_draw) * 255) / std::max(1, label.fade_in_frames);
-                if (color > 255) color = 255;
-                color *= 0x10101;
-                buffers.draw_text(label.text, label.pos, color);
-                ++it;
-            } else {
-                // Once we reach or exceed the final frame, draw at 100% opacity, then remove
-                buffers.draw_text(label.text, label.pos, 0xffffff);
-                it = labels_being_drawn.erase(it);
-            }
         }
 
         switch (p.event) {
@@ -1280,6 +1270,22 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             fail() << "Unknown tracing event code: " << p.event;
         }
 
+        for (auto it = labels_being_drawn.begin(); it != labels_being_drawn.end(); ) {
+            const Label &label = it->first;
+            int first_draw_clock = it->second;
+            int frames_since_first_draw = (halide_clock - first_draw_clock) / state.globals.timestep;
+            if (frames_since_first_draw < label.fade_in_frames) {
+                uint32_t color = ((1 + frames_since_first_draw) * 255) / std::max(1, label.fade_in_frames);
+                if (color > 255) color = 255;
+                color *= 0x10101;
+                buffers.draw_text(label.text, label.pos, color);
+                ++it;
+            } else {
+                // Once we reach or exceed the final frame, draw at 100% opacity, then remove
+                buffers.draw_text(label.text, label.pos, 0xffffff);
+                it = labels_being_drawn.erase(it);
+            }
+        }
     }
 
     if (verbose) {
