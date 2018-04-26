@@ -77,6 +77,8 @@ test: all
 ../../bin/HalideTraceViz: ../../util/HalideTraceViz.cpp
 	$(MAKE) -C ../../ bin/HalideTraceViz
 
+.SECONDARY:
+
 $(BIN)/viz_auto_%.mp4: $(BIN)/resize ../support/viz_auto.sh ../../bin/HalideTraceViz
 	@mkdir -p $(@D)
 	bash ../support/viz_auto.sh \
