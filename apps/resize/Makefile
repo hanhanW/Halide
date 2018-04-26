@@ -77,13 +77,12 @@ test: all
 ../../bin/HalideTraceViz: ../../util/HalideTraceViz.cpp
 	$(MAKE) -C ../../ bin/HalideTraceViz
 
-$(BIN)/viz_auto.mp4: $(BIN)/resize ../support/viz_auto.sh ../../bin/HalideTraceViz
+$(BIN)/viz_auto_%.mp4: $(BIN)/resize ../support/viz_auto.sh ../../bin/HalideTraceViz
 	@mkdir -p $(@D)
-	bash ../support/viz_auto.sh "$(BIN)/resize $(IMAGES)/rgb_small.png \
-	/tmp/foo.png \
-	-i box \
-	-t uint8 \
-	-f 0.5" ../../bin/HalideTraceViz $@
+	bash ../support/viz_auto.sh \
+		"$(BIN)/resize $(IMAGES)/rgb_small.png /tmp/$*.png -p 0 -b 1 -i $* -t uint8 -f 0.5" \
+		"../../bin/HalideTraceViz --timestep 10000 --verbose" \
+		$@
 
-viz_auto: $(BIN)/viz_auto.mp4
+viz_auto_%: $(BIN)/viz_auto_%.mp4
 	mplayer $^

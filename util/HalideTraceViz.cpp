@@ -471,8 +471,16 @@ void auto_layout_if_needed(int func_appearance_order, const GlobalConfig &global
 
     if (fi.config.color_dim < -1 && fi.type_and_dim_valid) {
         // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
-        if (fi.type_and_dim.dims.size() == 3 && (fi.type_and_dim.dims[2].extent == 3 || fi.type_and_dim.dims[2].extent == 4)) {
-            fi.config.color_dim = 2;
+        const auto &dims = fi.type_and_dim.dims;
+        if (dims.size() == 3) {
+            if ((dims[2].extent == 3 || dims[2].extent == 4)) {
+                fi.config.color_dim = 2;
+            } else if ((dims[0].extent == 3 || dims[0].extent == 4)) {
+                fi.config.color_dim = 0;
+                if (fi.config.strides.empty()) {
+                    fi.config.strides = { {0, 0}, {1, 0}, {0, 1} };
+                }
+            }
         }
     }
 
@@ -792,6 +800,7 @@ struct Buffers {
         }
     }
 
+    // TODO this doesn't bounds-check against frame_size
     void do_draw_pixel(const float zoom, const int x, const int y, const uint32_t color, uint32_t *dst) {
         const int izoom = (int) ceil(zoom);
         const int y_advance = frame_size.x - izoom;
@@ -901,6 +910,8 @@ public:
     }
 
     void fill_realization(uint32_t color, const FuncInfo &fi, const halide_trace_packet_t &p) {
+        // TODO: horrible hack to work about tracing data format bug, fix upstream
+        if (p.type.lanes > 1) return;
         do_fill_realization(image.data(), color, fi, p);
     }
 
