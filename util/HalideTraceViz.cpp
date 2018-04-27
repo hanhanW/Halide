@@ -778,10 +778,9 @@ void process_args(int argc, char **argv, VizState *state) {
 
 // There are three layers - image data, an animation on top of
 // it, and text labels. These layers get composited.
-struct Buffers {
+struct Surface {
+    const Point frame_size;
     std::vector<uint32_t> image, anim, anim_decay, text_buf, blend;
-    Point frame_size;
-    bool inited = false;
 
     // Composite a single pixel of 'over' over a single pixel of 'under', writing the result into dst.
     // Note that under or over might be dst.
@@ -868,16 +867,16 @@ struct Buffers {
 
 
 public:
-    void init(const Point &fs) {
-        assert(!inited);
-        frame_size = fs;
-        image.resize(frame_elems());
-        anim.resize(frame_elems());
-        anim_decay.resize(frame_elems());
-        text_buf.resize(frame_elems());
-        blend.resize(frame_elems());
-        inited = true;
-    }
+    Surface(const Point &fs)
+        : frame_size(fs),
+          image(frame_elems()),
+          anim(frame_elems()),
+          anim_decay(frame_elems()),
+          text_buf(frame_elems()),
+          blend(frame_elems()) {}
+
+    Surface(const Surface &) = delete;
+    void operator=(const Surface &) = delete;
 
     size_t frame_elems() const {
         return frame_size.x * frame_size.y;
@@ -978,13 +977,52 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
     // of these events have been output. When halide_clock gets ahead
     // of video_clock, we emit a new frame.
     size_t halide_clock = 0, video_clock = 0;
-    bool all_args_final = false;
+    bool is_state_finalized = false;
     bool seen_global_config_tag = false;
 
-    Buffers buffers;
+    std::unique_ptr<Surface> surface;
 
-    // Leave buffers unallocated for now;
-    // we'll allocate once all tags and flags are processed
+    const std::function<void()> finalize_state = [&]() -> void {
+        if (is_state_finalized) return;
+
+        is_state_finalized = true;
+
+        if (verbose) {
+            std::ostringstream dumps;
+            for (const auto &p : state.funcs) {
+                const auto &fi = p.second;
+                assert(fi.type_and_dim_valid);
+                fi.type_and_dim.dump(dumps, p.first);
+            }
+            info() << dumps.str();
+        }
+
+        // We wait until now to process the cmd-line args;
+        // this allows us to override trace-tag specifications
+        // via the commandline, which is handy for experimentations.
+        flag_processor(&state);
+
+        // allocate the surface after all tags and flags are processed
+        surface = std::unique_ptr<Surface>(new Surface(state.globals.frame_size));
+
+        if (state.globals.auto_layout_grid.x < 0 || state.globals.auto_layout_grid.y < 0) {
+            int cells_needed = 0;
+            for (const auto &p : state.funcs) {
+                if (p.second.type_and_dim_valid) cells_needed++;
+            }
+            Point cell_size = best_cell_size(cells_needed, state.globals.frame_size.x, state.globals.frame_size.y);
+            state.globals.auto_layout_grid.x = state.globals.frame_size.x / cell_size.x;
+            state.globals.auto_layout_grid.y = state.globals.frame_size.y / cell_size.y;
+            assert(state.globals.auto_layout_grid.x * state.globals.auto_layout_grid.y >= cells_needed);
+            info() << "For cells_needed = " << cells_needed
+                << " using " << state.globals.auto_layout_grid.x << "x" << state.globals.auto_layout_grid.y << " grid"
+                << " with cells of size " << cell_size.x << "x" << cell_size.y;
+        }
+
+        do_auto_layout(state);
+        finalize_func_config_values(state.funcs);
+    };
+
 
     struct PipelineInfo {
         std::string name;
@@ -1006,27 +1044,27 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         }
 
         if (halide_clock > video_clock) {
-            assert(all_args_final);
+            assert(is_state_finalized);
 
-            const int64_t frame_bytes = buffers.frame_elems() * sizeof(uint32_t);
+            const int64_t frame_bytes = surface->frame_elems() * sizeof(uint32_t);
 
             while (halide_clock > video_clock) {
                 // Composite text over anim over image
-                buffers.composite();
+                surface->composite();
 
                 // Dump the frame
-                int64_t bytes_written = write(STDOUT_FILENO, buffers.frame_data(), frame_bytes);
+                int64_t bytes_written = write(STDOUT_FILENO, surface->frame_data(), frame_bytes);
                 if (bytes_written < frame_bytes) {
                     fail() << "Could not write frame to stdout.";
                 }
 
                 video_clock += state.globals.timestep;
 
-                buffers.decay_animations(state.globals.decay_factor_after_compute, state.globals.decay_factor_during_compute);
+                surface->decay_animations(state.globals.decay_factor_after_compute, state.globals.decay_factor_during_compute);
             }
 
             // Blank anim
-            buffers.clear_animations();
+            surface->clear_animations();
         }
 
         // Read a tracing packet
@@ -1085,45 +1123,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             continue;
         }
 
-        if (!all_args_final) {
-            all_args_final = true;
-
-            if (verbose) {
-                std::ostringstream dumps;
-                for (const auto &p : state.funcs) {
-                    const auto &fi = p.second;
-                    assert(fi.type_and_dim_valid);
-                    fi.type_and_dim.dump(dumps, p.first);
-                }
-                info() << dumps.str();
-            }
-
-            // We wait until now to process the cmd-line args;
-            // this allows us to override trace-tag specifications
-            // via the commandline, which is handy for experimentations.
-            flag_processor(&state);
-
-            // allocate the buffers after all tags and flags are processed
-            buffers.init(state.globals.frame_size);
-
-            if (state.globals.auto_layout_grid.x < 0 || state.globals.auto_layout_grid.y < 0) {
-                int cells_needed = 0;
-                for (const auto &p : state.funcs) {
-                    if (p.second.type_and_dim_valid) cells_needed++;
-                }
-                Point cell_size = best_cell_size(cells_needed, state.globals.frame_size.x, state.globals.frame_size.y);
-                state.globals.auto_layout_grid.x = state.globals.frame_size.x / cell_size.x;
-                state.globals.auto_layout_grid.y = state.globals.frame_size.y / cell_size.y;
-                assert(state.globals.auto_layout_grid.x * state.globals.auto_layout_grid.y >= cells_needed);
-                info() << "For cells_needed = " << cells_needed
-                    << " using " << state.globals.auto_layout_grid.x << "x" << state.globals.auto_layout_grid.y << " grid"
-                    << " with cells of size " << cell_size.x << "x" << cell_size.y;
-            }
-
-            do_auto_layout(state);
-            finalize_func_config_values(state.funcs);
-
-        }
+        finalize_state();
 
         const PipelineInfo pipeline = pipeline_info[p.parent_id];
 
@@ -1140,7 +1140,6 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
         }
 
         std::string qualified_name = pipeline.name + ":" + p.func();
-
         if (state.funcs.find(qualified_name) == state.funcs.end()) {
             if (state.funcs.find(p.func()) != state.funcs.end()) {
                 state.funcs[qualified_name] = state.funcs[p.func()];
@@ -1222,7 +1221,7 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 if (p.event == halide_trace_store || fi.stats.num_realizations == 0 /* load from an input */) {
                     // Get the old color, in case we're only
                     // updating one of the color channels.
-                    uint32_t image_color = buffers.get_image_pixel(x, y);
+                    uint32_t image_color = surface->get_image_pixel(x, y);
                     double value = get_value_as<double>(p, lane);
 
                     // Normalize it.
@@ -1242,22 +1241,22 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                         image_color &= mask;
                         image_color |= int_value << (channel * 8);
                     }
-                    buffers.draw_image_pixel(fi.config.zoom, x, y, image_color);
+                    surface->draw_image_pixel(fi.config.zoom, x, y, image_color);
                 }
 
                 // Stores are orange, loads are blue.
                 uint32_t color = p.event == halide_trace_load ? 0xffffdd44 : 0xff44ddff;
-                buffers.draw_anim_pixel(fi.config.zoom, x, y, color);
+                surface->draw_anim_pixel(fi.config.zoom, x, y, color);
             }
             break;
         }
         case halide_trace_begin_realization:
             fi.stats.num_realizations++;
-            buffers.fill_realization(0xff000000 | fi.config.uninitialized_memory_color, fi, p);
+            surface->fill_realization(0xff000000 | fi.config.uninitialized_memory_color, fi, p);
             break;
         case halide_trace_end_realization:
             if (fi.config.blank_on_end_realization > 0) {
-                buffers.fill_realization(0, fi, p);
+                surface->fill_realization(0, fi, p);
             }
             break;
         case halide_trace_produce:
@@ -1285,11 +1284,11 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                 uint32_t color = ((1 + frames_since_first_draw) * 255) / std::max(1, label.fade_in_frames);
                 if (color > 255) color = 255;
                 color *= 0x10101;
-                buffers.draw_text(label.text, label.pos, color);
+                surface->draw_text(label.text, label.pos, color);
                 ++it;
             } else {
                 // Once we reach or exceed the final frame, draw at 100% opacity, then remove
-                buffers.draw_text(label.text, label.pos, 0xffffff);
+                surface->draw_text(label.text, label.pos, 0xffffff);
                 it = labels_being_drawn.erase(it);
             }
         }
