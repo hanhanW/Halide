@@ -929,8 +929,6 @@ public:
     }
 
     void fill_realization(uint32_t color, const FuncInfo &fi, const halide_trace_packet_t &p) {
-        // TODO: horrible hack to work around tracing data format bug, fix upstream
-        if (p.type.lanes > 1) return;
         do_fill_realization(image.data(), color, fi, p);
     }
 
