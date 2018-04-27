@@ -460,7 +460,7 @@ void finalize_func_config_values(std::map<std::string, FuncInfo> &funcs) {
     }
 }
 
-void auto_layout_if_needed(int layout_order, const GlobalConfig &globals, const std::string &func_name, FuncInfo &fi) {
+void do_auto_layout(const GlobalConfig &globals, const std::string &func_name, FuncInfo &fi) {
     if (fi.config_valid) {
         return;
     }
@@ -473,8 +473,8 @@ void auto_layout_if_needed(int layout_order, const GlobalConfig &globals, const 
         globals.frame_size.y / globals.auto_layout_grid.y
     };
 
-    int row = layout_order / globals.auto_layout_grid.x;
-    int col = layout_order % globals.auto_layout_grid.x;
+    int row = fi.layout_order / globals.auto_layout_grid.x;
+    int col = fi.layout_order % globals.auto_layout_grid.x;
 
     if (fi.config.color_dim < -1) {
         // If color_dim is unspecified and it looks like a 2d RGB Func, make it one
@@ -544,6 +544,18 @@ void auto_layout_if_needed(int layout_order, const GlobalConfig &globals, const 
     }
 
     fi.config_valid = true;
+}
+
+void do_auto_layout(VizState &state) {
+    if (!state.globals.auto_layout) {
+        return;
+    }
+
+    for (auto &p : state.funcs) {
+        const auto &func_name = p.first;
+        auto &fi = p.second;
+        do_auto_layout(state.globals, func_name, fi);
+    }
 }
 
 float calc_side_length(int min_cells, int width, int height) {
@@ -1109,6 +1121,10 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
                     << " using " << state.globals.auto_layout_grid.x << "x" << state.globals.auto_layout_grid.y << " grid"
                     << " with cells of size " << cell_size.x << "x" << cell_size.y;
             }
+
+            do_auto_layout(state);
+            finalize_func_config_values(state.funcs);
+
         }
 
         const PipelineInfo pipeline = pipeline_info[p.parent_id];
@@ -1139,14 +1155,10 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
 
         // Draw the event
         FuncInfo &fi = state.funcs[qualified_name];
+        if (!fi.config_valid) continue;
 
         if (fi.stats.first_draw_time < 0) {
             fi.stats.first_draw_time = halide_clock;
-
-            if (state.globals.auto_layout) {
-                auto_layout_if_needed(fi.layout_order, state.globals, p.func(), fi);
-            }
-            finalize_func_config_values(fi);
 
             for (const auto &label : fi.config.labels) {
                 // Convert offset to absolute position before enqueuing
@@ -1157,9 +1169,6 @@ int run(bool ignore_trace_tags, FlagProcessor flag_processor) {
             }
         }
 
-        // Check after first_draw_time, since auto_layout on first "draw"
-        // could change the value
-        if (!fi.config_valid) continue;
 
         if (fi.stats.first_packet_idx < 0) {
             fi.stats.first_packet_idx = packet_clock;
